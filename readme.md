@@ -1,4 +1,4 @@
-# User Stories for Fitness & Workout Tracker
+# Backlog – Fitness & Workout Tracker
 
 1️⃣ User Registration & Authentication  
 As a user, I want to sign up and log in securely, so that I can access my personalized fitness plans.  
