@@ -8,7 +8,7 @@ console.log("MongoDB URI:", MONGODB_URI ? "URI loaded (sensitive - not displayed
 async function dbConnect() {
     try {
         await connect(MONGODB_URI, {
-            dbName: 'FitDb',
+            dbName: 'fitDB',
             retryWrites: true,
             w: 'majority'
         });
