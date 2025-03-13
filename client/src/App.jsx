@@ -16,8 +16,7 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             {/* Protected Routes */}
-            <Route
-              path="/dashboard"
+            <Route path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
