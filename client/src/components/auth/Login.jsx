@@ -56,11 +56,7 @@ function Login() {
                   />
                 </Form.Group>
 
-                <Button
-                  disabled={loading}
-                  className="w-100"
-                  type="submit"
-                >
+                <Button disabled={loading} className="w-100" type="submit" >
                   Log In
                 </Button>
               </Form>
