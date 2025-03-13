@@ -47,13 +47,20 @@ The system is structured as a microservice:
 - **External Services:** Email/SMS services for verification and password reset.
 
 ### Authentication Flow Diagram
-```mermaid
-sequenceDiagram
-    participant User
-    participant AuthServer
-    participant Database
+%% Updated Authentication Flow Diagram with enhanced colors and styling %%
+flowchart LR
+    A[User]:::userStyle -->|POST /auth/login| B[Auth Server]:::serverStyle
+    B -->|Verify credentials| C[Database]:::dbStyle
+    C -- Credentials valid --> B
+    B -->|200 OK + JWT Tokens| A
+    A -->|GET /protected/resource| B
+    B -->|Validate JWT| B
+    B -->|Return resource data| A
 
-    User->>AuthServer: POST /auth/login (email, password)
+classDef userStyle fill:#F6EAD3,stroke:#B58900,stroke-width:2px;
+classDef serverStyle fill:#DDF6FF,stroke:#268BD2,stroke-width:2px;
+classDef dbStyle fill:#DFFFD6,stroke:#859900,stroke-width:2px;
+/auth/login (email, password)
     AuthServer->>Database: Verify credentials
     Database-->>AuthServer: Credentials valid
     AuthServer-->>User: 200 OK + JWT access token & refresh token
