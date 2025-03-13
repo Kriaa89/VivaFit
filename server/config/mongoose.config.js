@@ -5,11 +5,11 @@ const MONGODB_URI = process.env.MONGODB_URI;
 async function dbConnect() {
     try {
         await connect(MONGODB_URI, {
-            dbName: 'FitDb',
+            dbName: 'fitDB',
         });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } catch (error) {
-        console.log("Failed to connect to MongoDB:", error);
+        console.log(error);
         throw error;
     }
 }

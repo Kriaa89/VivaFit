@@ -36,9 +36,11 @@ function Register() {
     try {
       setError("");
       setLoading(true);
-      await register(email, password, firstName, lastName);
+      // Register the user
+      const user = await register(email, password, firstName, lastName);
       
-      // Create user profile in database
+      // Create user profile in database - FIX: Get getIdToken from useAuth
+      const { getIdToken } = useAuth();
       const token = await getIdToken();
       await createUserProfile(firstName, lastName, email, token);
       

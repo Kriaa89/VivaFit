@@ -1,5 +1,6 @@
 import admin from '../config/firebase.config.js';
 import asyncHandler from 'express-async-handler';
+import User from '../models/user.model.js';
 
 // Middleware to verify Firebase token
 export const verifyToken = asyncHandler(async (req, res, next) => {
