@@ -11,7 +11,7 @@ As a user, I want to sign up and log in securely, so that I can access my person
 As a user, when I log in, I want to see my workout progress, fitness goals, and recommended exercises, so that I can track my fitness journey easily.  
 - The dashboard displays total workouts completed.  
 - Goals and progress tracking are clearly visible.  
-- Recommended workout routines appear based on the user’s profile and fitness goals.  
+- Recommended workout routines appear based on the user's profile and fitness goals.  
 - Smartwatch sync status is visible (if connected).  
 - A reminder or widget prompts the user to update their weekly weight if due.
 
@@ -52,7 +52,7 @@ As a user, I want to update my weight on a weekly basis, so that I can monitor m
 - The app prompts the user to enter their weight once a week via a dashboard reminder or notification.  
 - Each weight entry is stored with a timestamp, allowing for historical tracking.  
 - Graphs and charts visually display weight trends over time, highlighting progress toward target weight goals.  
-- The app compares current weight entries against user-set goals and displays percentage progress (e.g., “You’ve lost 4% of your target weight!”).  
+- The app compares current weight entries against user-set goals and displays percentage progress (e.g., "You've lost 4% of your target weight!").  
 - Feedback or recommendations are provided based on the weight trend, with positive reinforcement for progress or suggestions for plan adjustments if progress stalls.
 
 9️⃣ Smartwatch Integration  
@@ -75,7 +75,7 @@ As a user, I want to connect with other users, share progress, and join challeng
 - A personalized welcome message displaying the user's name.  
 - A progress summary including total workouts completed and current fitness goals.  
 - Recommended workout routines curated from the user's profile data, with optional AI insights available as a supporting feature.  
-- A prominent “Start Workout” button for quick access.  
+- A prominent "Start Workout" button for quick access.  
 - A widget or reminder prompting the user to update their weekly weight, if due.
 
 **2️⃣ Profile Section:**  
@@ -84,7 +84,7 @@ As a user, I want to connect with other users, share progress, and join challeng
 - A historical log of workouts and milestones achieved.
 
 **3️⃣ Workout Plans:**  
-- A list of tailored workout routines generated based on the user’s inputs.  
+- A list of tailored workout routines generated based on the user's inputs.  
 - An exercise library with filters for muscle groups and equipment for manual exploration.
 
 **4️⃣ Progress Tracker:**  
@@ -93,4 +93,50 @@ As a user, I want to connect with other users, share progress, and join challeng
 
 **5️⃣ Smartwatch Sync (if enabled):**  
 - Display of the smartwatch connection status.  
-- Information on the last sync, ensuring the user’s workout data is up-to-date.
+- Information on the last sync, ensuring the user's workout data is up-to-date.
+
+---
+
+## Developer Setup Guide
+
+### Firebase Authentication Setup
+
+This application uses Firebase Authentication for secure user management. Follow these steps to configure it:
+
+1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/)
+2. Enable Authentication with Email/Password and Google sign-in methods
+3. Generate a new private key for Firebase Admin SDK:
+   - Go to Project Settings > Service Accounts
+   - Click "Generate New Private Key"
+   - Save the file securely
+
+### Environment Variables
+
+For local development:
+
+1. Copy `.env.template` to `.env` in the server directory:
+   ```
+   cp server/.env.template server/.env
+   ```
+2. Fill in your specific configuration values in the `.env` file
+
+### Firebase Service Account Setup (Choose ONE method)
+
+**Option 1: Using Environment Variables (Recommended for production)**
+
+Add the Firebase service account details to your `.env` file:
+```
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com
+```
+
+**Option 2: Using JSON file (For local development)**
+
+1. Copy `firebase-service-account.template.json` to `firebase-service-account.json`
+   ```
+   cp server/firebase-service-account.template.json server/firebase-service-account.json
+   ```
+2. Replace the placeholder values with your actual Firebase service account credentials
+
+⚠️ **IMPORTANT: Never commit `firebase-service-account.json` or your `.env` file to Git** ⚠️
