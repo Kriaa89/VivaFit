@@ -57,7 +57,7 @@ function Register() {
   // Function to create user profile in your database
   async function createUserProfile(firstName, lastName, email, token) {
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("http://localhost:8000/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,6 +137,7 @@ function Register() {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    autocomplete="new-password"
                   />
                 </Form.Group>
 
@@ -148,6 +149,7 @@ function Register() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
+                    autocomplete="new-password"
                   />
                 </Form.Group>
 
