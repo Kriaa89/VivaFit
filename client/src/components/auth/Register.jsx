@@ -13,7 +13,7 @@ function Register() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register, getIdToken } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -36,12 +36,14 @@ function Register() {
     try {
       setError("");
       setLoading(true);
+      
       // Register the user
       const user = await register(email, password, firstName, lastName);
       
-      // Create user profile in database - FIX: Get getIdToken from useAuth
-      const { getIdToken } = useAuth();
+      // Get token using the function from the component level
       const token = await getIdToken();
+      
+      // Create user profile in database
       await createUserProfile(firstName, lastName, email, token);
       
       navigate("/dashboard");
