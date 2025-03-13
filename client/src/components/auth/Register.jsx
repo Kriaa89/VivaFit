@@ -48,7 +48,11 @@ function Register() {
       
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message || "Failed to create an account");
+      if (err.code === 'auth/email-already-in-use') {
+        setError("This email is already in use. Please use a different email or try logging in instead.");
+      } else {
+        setError(err.message || "Failed to create an account");
+      }
     } finally {
       setLoading(false);
     }
@@ -57,7 +61,7 @@ function Register() {
   // Function to create user profile in your database
   async function createUserProfile(firstName, lastName, email, token) {
     try {
-      const response = await fetch("http://localhost:8000/api/users", {
+      const response = await fetch("http://localhost:8080/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,6 +130,7 @@ function Register() {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    autoComplete="username"
                   />
                 </Form.Group>
 
@@ -137,7 +142,7 @@ function Register() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    autocomplete="new-password"
+                    autoComplete="new-password"
                   />
                 </Form.Group>
 
@@ -149,7 +154,7 @@ function Register() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    autocomplete="new-password"
+                    autoComplete="new-password"
                   />
                 </Form.Group>
 
