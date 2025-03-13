@@ -4,9 +4,11 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  updateProfile
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider
 } from "firebase/auth";
-import { auth } from "../firebase/firebase.config";
+import { auth, googleProvider } from "../firebase/firebase.config";
 
 const AuthContext = createContext();
 
@@ -50,6 +52,31 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Google sign-in function
+  async function signInWithGoogle() {
+    try {
+      setError("");
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      
+      // Extract profile information
+      const { displayName, email, photoURL } = user;
+      
+      // Parse displayName into firstName and lastName
+      let firstName = "", lastName = "";
+      if (displayName) {
+        const nameParts = displayName.split(" ");
+        firstName = nameParts[0] || "";
+        lastName = nameParts.slice(1).join(" ") || "";
+      }
+      
+      return { user, firstName, lastName, email, photoURL };
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  }
+  
   // Logout function
   function logout() {
     return signOut(auth);
@@ -77,7 +104,8 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
-    getIdToken
+    getIdToken, 
+    signInWithGoogle
   };
 
   return (
