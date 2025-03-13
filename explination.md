@@ -222,7 +222,6 @@ Input Validation: Form validation on client and server side
 Below is an example diagram illustrating the authentication data flow:
 
 ```mermaid
-%% filepath: c:\Users\abdal\OneDrive\Bureau\VivaFit\explination.md
 flowchart TD
     A[User submits login/registration details]
     B[Firebase Authentication]
@@ -248,12 +247,12 @@ flowchart TD
 
 Planned improvements for the authentication system:
 
-- Password Reset: Implement forgot password functionality.
-- Email Verification: Add email verification for new accounts.
-- Multi-factor Authentication: Enhance security with 2FA options.
-- Session Management: Allow users to view and manage active sessions.
-- Account Linking: Enable connecting multiple auth methods to one account.
-- Additional OAuth Providers: Add support for Facebook, Apple, etc.
-- Admin Authentication: Special authentication for admin users.
+- **Password Reset**: Implement forgot password functionality.
+- **Email Verification**: Add email verification for new accounts.
+- **Multi-factor Authentication**: Enhance security with 2FA options.
+- **Session Management**: Allow users to view and manage active sessions.
+- **Account Linking**: Enable connecting multiple auth methods to one account.
+- **Additional OAuth Providers**: Add support for Facebook, Apple, etc.
+- **Admin Authentication**: Special authentication for admin users.
 
 This document will be updated as additional authentication features are implemented.
