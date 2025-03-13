@@ -47,26 +47,25 @@ The system is structured as a microservice:
 - **External Services:** Email/SMS services for verification and password reset.
 
 ### Authentication Flow Diagram
-%% Updated Authentication Flow Diagram with enhanced colors and styling %%
-flowchart LR
-    A[User]:::userStyle -->|POST /auth/login| B[Auth Server]:::serverStyle
-    B -->|Verify credentials| C[Database]:::dbStyle
-    C -- Credentials valid --> B
+### Authentication Flow Diagram
+
+```mermaid
+graph LR
+    A[User] -->|POST /auth/login| B[Auth Server]
+    B -->|Verify credentials| C[Database]
+    C -->|Credentials valid| B
     B -->|200 OK + JWT Tokens| A
     A -->|GET /protected/resource| B
     B -->|Validate JWT| B
     B -->|Return resource data| A
 
-classDef userStyle fill:#F6EAD3,stroke:#B58900,stroke-width:2px;
-classDef serverStyle fill:#DDF6FF,stroke:#268BD2,stroke-width:2px;
-classDef dbStyle fill:#DFFFD6,stroke:#859900,stroke-width:2px;
-/auth/login (email, password)
-    AuthServer->>Database: Verify credentials
-    Database-->>AuthServer: Credentials valid
-    AuthServer-->>User: 200 OK + JWT access token & refresh token
-    User->>AuthServer: GET /protected/resource (Authorization: Bearer JWT)
-    AuthServer->>AuthServer: Validate JWT
-    AuthServer-->>User: 200 OK + resource data
+    classDef userStyle fill:#F6EAD3,stroke:#B58900,stroke-width:2px;
+    classDef serverStyle fill:#DDF6FF,stroke:#268BD2,stroke-width:2px;
+    classDef dbStyle fill:#DFFFD6,stroke:#859900,stroke-width:2px;
+
+    class A userStyle;
+    class B serverStyle;
+    class C dbStyle;
 Installation and Setup
 Clone the Repository:
 bash
