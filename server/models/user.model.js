@@ -1,7 +1,7 @@
 import {model, Schema} from 'mongoose';
 import bcrypt from "bcrypt";
 
-const fitSchema = new Schema({
+const UserSchema = new Schema({
     firstName : {
         type : String,
         required : [true, "First name is required"], 
@@ -44,3 +44,5 @@ const fitSchema = new Schema({
         }
     }
 })
+const User = model("User", UserSchema);
+export default User;
