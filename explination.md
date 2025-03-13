@@ -1,281 +1,201 @@
-# VivaFit Authentication System: Implementation and Documentation
+# VivaFit Authentication System
 
-This document provides a comprehensive explanation of the authentication system implemented for VivaFit, including features, implementation details, security considerations, and workflow.
+## Overview
+The VivaFit Authentication System is a comprehensive solution that integrates both frontend and backend components. It handles user registration, login, token issuance, and role-based access control, ensuring that only authenticated users can access protected features while providing a seamless user experience on the client side.
+
+---
 
 ## Table of Contents
-- [Features Implemented](#features-implemented)
-- [Technical Implementation](#technical-implementation)
-- [Authentication Flows](#authentication-flows)
-- [JWT & Firebase Security](#jwt--firebase-security)
-- [Authentication Data Flow Diagram](#authentication-data-flow-diagram)
-- [How We Work](#how-we-work)
-- [Code Structure](#code-structure)
-- [Security Considerations](#security-considerations)
-- [Future Enhancements](#future-enhancements)
+1. [Features](#features)
+2. [System Architecture](#system-architecture)
+3. [Installation and Setup](#installation-and-setup)
+4. [Configuration](#configuration)
+5. [Usage](#usage)
+   - [Register a New User](#register-a-new-user)
+   - [User Login](#user-login)
+   - [Access Protected Endpoint](#access-protected-endpoint)
+   - [Refresh Token](#refresh-token)
+   - [Password Reset](#password-reset)
+6. [Security Considerations](#security-considerations)
+7. [API Endpoints](#api-endpoints)
+8. [Workflows](#workflows)
+9. [Testing](#testing)
+10. [Contributing](#contributing)
+11. [License](#license)
 
-## Features Implemented
+---
 
-### 1. User Registration with Email/Password
-- **Description**: Users can create new accounts by providing their email, password, and personal details
-- **Implementation Details**:
-  - Input validation for all fields (name, email, password)
-  - Password confirmation check
-  - Secure password storage (handled by Firebase)
-  - Error handling for duplicate emails
-  - User profile creation in MongoDB after successful registration
+## Features
+- **Frontend Integrated UI:** Responsive design with intuitive dashboards and real-time feedback.
+- **Backend API Endpoints:** Robust RESTful services for authentication, token management, and user profile operations.
+- **User Registration & Verification:** Secure registration with email/password and optional email verification.
+- **JWT-Based Authentication:** Stateless session management using JSON Web Tokens.
+- **Token Refresh & Logout:** Short-lived access tokens with accompanying refresh tokens.
+- **Password Recovery:** Secure password reset workflow via email.
+- **Role-Based Access Control (RBAC):** Define and enforce permissions based on user roles.
+- **Audit Logging & Monitoring:** Detailed activity logs for security audits and performance monitoring.
+- **Scalability:** Designed for high-volume authentication requests.
+- **Integration-Ready:** RESTful APIs that work with mobile and web clients.
 
-### 2. Login with Email/Password
-- **Description**: Registered users can securely access their accounts
-- **Implementation Details**:
-  - Secure credential verification
-  - JWT token generation upon successful login
-  - Error messages for invalid credentials
-  - Redirection to dashboard after successful login
+---
 
-### 3. Google Authentication (Social Login)
-- **Description**: One-click sign-in using Google accounts
-- **Implementation Details**:
-  - OAuth 2.0 flow with Firebase
-  - Automatic extraction of profile information
-  - Account creation for first-time Google users
-  - Account linking for existing email users (automatic)
+## System Architecture
+The system is structured as a microservice:
+- **Auth Server:** Core service (Node.js/Express) exposing authentication APIs.
+- **Database:** Stores user profiles, hashed passwords, and token data (e.g., PostgreSQL, MongoDB).
+- **Client Applications:** VivaFit web and mobile clients that interact with the Auth Server.
+- **External Services:** Email/SMS services for verification and password reset.
 
-### 4. JWT-Based Security
-- **Description**: Token-based authentication for API security
-- **Implementation Details**:
-  - Firebase-generated JWTs for session management
-  - Server-side token verification
-  - Automatic token refresh
-  - Secure storage of tokens
-
-### 5. Protected Routes
-- **Description**: Access control for authenticated sections
-- **Implementation Details**:
-  - Route guards using React Router
-  - Automatic redirects for unauthenticated users
-  - Loading state handling during authentication check
-
-## Technical Implementation
-
-### Client-Side Authentication (React + Firebase)
-
-#### Firebase Configuration
-```javascript
-// Firebase configuration with Google Auth Provider
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAyuKCpdy13YgozILukU0Q0XQQ1SSue_jU",
-    authDomain: "vivafit-c32e5.firebaseapp.com",
-    projectId: "vivafit-c32e5",
-    // Other configuration
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-
-#uthentication Context
-#Our AuthContext.jsx centralizes authentication logic:
-
-// Core authentication functions
-async function register(email, password, firstName, lastName) {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  await updateProfile(userCredential.user, { displayName: `${firstName} ${lastName}` });
-  return userCredential.user;
-}
-
-async function login(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
-}
-
-async function signInWithGoogle() {
-  const result = await signInWithPopup(auth, googleProvider);
-  const user = result.user;
-  
-  // Extract profile information
-  const { displayName, email, photoURL } = user;
-  
-  // Parse displayName into firstName and lastName
-  let firstName = "", lastName = "";
-  if (displayName) {
-    const nameParts = displayName.split(" ");
-    firstName = nameParts[0] || "";
-    lastName = nameParts.slice(1).join(" ") || "";
-  }
-  
-  return { user, firstName, lastName, email, photoURL };
-}
-
-Server-Side Authentication (Node.js + Firebase Admin)
-Firebase Admin Setup
-import admin from 'firebase-admin';
-import serviceAccount from '../firebase-service-account.json';
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-export default admin;
-
-JWT Verification Middleware
-// Authentication middleware that verifies Firebase JWT tokens
-export const authenticate = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-    
-    const token = authHeader.split(' ')[1];
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    
-    // Add the verified user data to the request
-    req.user = {
-      uid: decodedToken.uid,
-      email: decodedToken.email
-    };
-    
-    // Find user in database
-    const dbUser = await User.findOne({ firebaseUID: decodedToken.uid });
-    if (dbUser) {
-      req.dbUser = dbUser;
-    }
-    
-    next();
-  } catch (error) {
-    res.status(401).json({ message: "Invalid or expired token" });
-  }
-};
-Authentication Flows
-Registration Flow
-User enters registration details (first name, last name, email, password)
-Client validates input (password match, email format)
-Firebase creates new user account
-Firebase returns user object with UID
-Client requests JWT token
-Client sends user data + token to server
-Server verifies token
-Server creates user profile in MongoDB
-User is redirected to dashboard
-Login Flow
-User enters email and password
-Firebase verifies credentials
-On success, Firebase returns user object
-Client requests JWT token
-User is redirected to dashboard
-Protected API calls include token for authentication
-Google Authentication Flow
-User clicks "Sign in with Google"
-Google OAuth popup appears
-User selects Google account
-Firebase creates/authenticates user
-Client extracts profile information
-Client requests JWT token
-Client sends user data + token to server
-Server creates/updates user profile
-User is redirected to dashboard
-JWT & Firebase Security
-What is JWT?
-JSON Web Tokens (JWT) are an open standard for securely transmitting information between parties as a JSON object. In VivaFit, we use Firebase-generated JWTs that contain:
-
-User identification (UID)
-Token issue time
-Token expiration time
-Signature for verification
-How JWTs Work in VivaFit
-Token Generation: After successful authentication, Firebase automatically generates a JWT
-
-Token Storage: The token is stored in memory (not in localStorage for security)
-
-Token Usage:
-
-Token Verification: Server uses Firebase Admin SDK to verify token authenticity and extract user data
-
-## How We Work
-
-At VivaFit, we follow a structured approach to ensure a seamless and secure authentication experience for our users. Here’s an overview of our workflow:
-
-1. **Planning and Design**: We start by planning the authentication features and designing the user flows. This includes deciding on the authentication methods (email/password, social login), user roles, and security measures.
-
-2. **Implementation**: Our development team implements the authentication system using React for the client-side and Node.js with Firebase Admin for the server-side. We use Firebase Authentication for managing user accounts and JWTs for secure session management.
-
-3. **Testing**: We rigorously test the authentication flows to ensure they work as expected. This includes unit tests, integration tests, and end-to-end tests to cover all possible scenarios.
-
-4. **Security Review**: We conduct a thorough security review to identify and mitigate any potential vulnerabilities. This includes ensuring secure storage of tokens, protection against XSS and CSRF attacks, and implementing multi-factor authentication.
-
-5. **Deployment**: Once the authentication system is thoroughly tested and reviewed, we deploy it to our production environment. We use continuous integration and continuous deployment (CI/CD) pipelines to automate the deployment process.
-
-6. **Monitoring and Maintenance**: After deployment, we continuously monitor the authentication system to ensure it remains secure and performs well. We also regularly update the system to add new features and address any issues that arise.
-
-By following this structured approach, we ensure that our authentication system is robust, secure, and user-friendly.
-
-### Code Structure
-
-#### Client-Side Files
-- **`/firebase/firebase.config.js`**: Firebase initialization
-- **`/context/AuthContext.jsx`**: Authentication state and methods
-- **`/components/auth/Login.jsx`**: Login form and Google auth button
-- **`/components/auth/Register.jsx`**: Registration form
-- **`/components/auth/ProtectedRoute.jsx`**: Route guard component
-
-#### Server-Side Files
-- **`/config/firebase.config.js`**: Firebase Admin initialization
-- **`/middleware/auth.middleware.js`**: JWT verification
-- **`/controllers/user.controller.js`**: User creation and management
-- **`/models/user.model.js`**: User database schema
-- **`/routes/user.routes.js`**: User-related API endpoints
-
-### Security Considerations
-
-The implemented authentication system addresses several security concerns:
-
-- **Password Security**: Firebase handles password hashing and storage.
-- **Protection Against XSS**: Tokens aren't stored in localStorage/cookies.
-- **CSRF Protection**: Using Bearer token authentication instead of cookies.
-- **Token Expiration**: JWTs expire automatically, requiring refresh.
-- **Secure Verification**: Server-side token verification with Firebase Admin.
-- **Protected Routes**: Client-side route guards prevent unauthorized access.
-- **Input Validation**: Form validation on client and server side.
-
-### Authentication Data Flow Diagram
-
-Below is an example diagram illustrating the authentication data flow:
-
+### Authentication Flow Diagram
 ```mermaid
-flowchart TD
-    A[User submits login/registration details]
-    B[Firebase Authentication]
-    C{Authentication successful?}
-    D[Firebase returns JWT]
-    E[Client stores token temporarily in memory]
-    F[Client sends request with token to server]
-    G[Server verifies JWT using Firebase Admin]
-    H[Access Granted / Profile Created]
-    I[Return authentication error]
+sequenceDiagram
+    participant User
+    participant AuthServer
+    participant Database
 
-    A --> B
-    B --> C
-    C -- Yes --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-    C -- No --> I
-```
+    User->>AuthServer: POST /auth/login (email, password)
+    AuthServer->>Database: Verify credentials
+    Database-->>AuthServer: Credentials valid
+    AuthServer-->>User: 200 OK + JWT access token & refresh token
+    User->>AuthServer: GET /protected/resource (Authorization: Bearer JWT)
+    AuthServer->>AuthServer: Validate JWT
+    AuthServer-->>User: 200 OK + resource data
+Installation and Setup
+Clone the Repository:
+bash
+Copier
+git clone https://github.com/vivafit/auth-system.git
+cd auth-system
+Install Dependencies:
+bash
+Copier
+npm install
+Configure Environment Variables: Create a .env file with necessary variables (see Configuration).
+Database Setup: Ensure your database is running and initialize the schema (e.g., using Sequelize migrations):
+bash
+Copier
+npx sequelize db:migrate
+Start the Server:
+bash
+Copier
+npm start
+The server will start on the port specified in the PORT variable (default is 3000).
+Configuration
+Key environment variables:
 
-### Future Enhancements
+Variable	Description	Example
+PORT	Port for the auth server	3000
+DATABASE_URL	Database connection string	postgres://user:pass@host/db
+JWT_SECRET	Secret key for signing JWT tokens	(long, random string)
+JWT_EXPIRES_IN	JWT expiration time	15m
+REFRESH_TOKEN_SECRET	Secret key for signing refresh tokens	(long, random string)
+REFRESH_TOKEN_EXPIRES_IN	Refresh token expiration time	7d
+EMAIL_SMTP_SERVER	SMTP server for sending emails	smtp.mailprovider.com
+EMAIL_USER	SMTP username	no-reply@vivafit.com
+EMAIL_PASS	SMTP password	********
+CLIENT_URL	URL of the client application (for CORS/redirects)	https://app.vivafit.com
+Note: Keep all secret keys confidential and do not commit them to version control.
 
-Planned improvements for the authentication system:
+Usage
+Register a New User
+Make a POST request to register a new user:
 
-- **Password Reset**: Implement forgot password functionality.
-- **Email Verification**: Add email verification for new accounts.
-- **Multi-factor Authentication**: Enhance security with 2FA options.
-- **Session Management**: Allow users to view and manage active sessions.
-- **Account Linking**: Enable connecting multiple auth methods to one account.
-- **Additional OAuth Providers**: Add support for Facebook, Apple, etc.
-- **Admin Authentication**: Special authentication for admin users.
+bash
+Copier
+curl -X POST https://api.vivafit.com/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Alice Example", "email": "alice@example.com", "password": "SecurePa$$123" }'
+Expected Response: 201 Created on success.
 
-This document will be updated as additional authentication features are implemented.
+User Login
+Authenticate with your credentials:
+
+bash
+Copier
+curl -X POST https://api.vivafit.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "alice@example.com", "password": "SecurePa$$123" }'
+Expected Response: A JSON payload containing accessToken, refreshToken, and token expiry info.
+
+Access Protected Endpoint
+Access a secure endpoint by including the JWT:
+
+bash
+Copier
+curl -X GET https://api.vivafit.com/profile \
+  -H "Authorization: Bearer <JWT_TOKEN>"
+Expected Response: 200 OK with user data, or an error if unauthorized.
+
+Refresh Token
+Obtain a new access token when the current one expires:
+
+bash
+Copier
+curl -X POST https://api.vivafit.com/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{ "refreshToken": "<REFRESH_TOKEN>" }'
+Expected Response: New access token (and optionally a new refresh token).
+
+Password Reset
+Request Reset:
+bash
+Copier
+curl -X POST https://api.vivafit.com/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "alice@example.com" }'
+Reset Password:
+bash
+Copier
+curl -X POST https://api.vivafit.com/auth/reset-password \
+  -H "Content-Type: application/json" \
+  -d '{ "resetToken": "<TOKEN_FROM_EMAIL>", "newPassword": "NewSecurePa$$456" }'
+Security Considerations
+Password Hashing: Passwords are hashed (e.g., using Bcrypt) before storage.
+JWT Security: Access tokens have short lifespans and are signed with a strong secret.
+Secure Token Storage: Tokens are stored securely (e.g., HTTP-only cookies).
+Transport Security: All communication uses HTTPS with enforced TLS.
+Input Validation & Sanitization: All inputs are validated and sanitized to prevent injection attacks.
+Rate Limiting: Limits on login attempts help prevent brute-force attacks.
+CORS & CSP: Configured to allow requests only from trusted origins and mitigate XSS.
+Audit Logging: Logs critical operations for monitoring and security audits.
+Regular Dependency Updates: Keep third-party libraries up-to-date to patch vulnerabilities.
+API Endpoints
+Endpoint	Method	Description	Auth Required?
+/auth/register	POST	Register a new user account.	No
+/auth/login	POST	Authenticate user and issue tokens.	No
+/auth/refresh	POST	Refresh the access token using a refresh token.	No (refresh token required)
+/auth/logout	POST	Log out the user (invalidate refresh token).	Yes
+/auth/forgot-password	POST	Request a password reset email.	No
+/auth/reset-password	POST	Reset password using the provided token.	No
+/profile	GET	Protected endpoint to fetch user profile information.	Yes (access token required)
+/admin/users	GET	Admin-only endpoint to list users (RBAC example).	Yes (admin role required)
+Workflows
+### User Registration Workflow
+Submit Registration: User submits his/her details using a frontend form. The backend validates the input for duplicate emails and securely hashes passwords before creating the user profile.
+Email Verification (Optional): The backend dispatches a verification token that the user activates using the client interface.
+
+### User Login Workflow
+Credentials Submission: The user logs in via the frontend, which sends credentials to the backend.
+Authentication: The backend validates the credentials, issues JWT access and refresh tokens, and the frontend establishes a secure session with these tokens.
+
+### Token Refresh & Session Management Workflow
+Detect Expiration: The frontend monitors token expiry and triggers a request for a new access token.
+Request New Token: The backend validates the refresh token and provides new tokens, ensuring continuous user sessions.
+
+### Password Reset Workflow
+Initiate Reset: The user triggers a password reset from the frontend, prompting the backend to send a secure reset token via email.
+Reset Password: The user provides a new password along with the reset token in the frontend, and the backend updates the user credentials securely.
+Testing
+Run the test suite to verify functionality:
+
+bash
+Copier
+npm test
+This will execute unit and integration tests for registration, login, token refresh, and other features.
+
+Contributing
+Contributions are welcome! To contribute:
+
+Issues: Open an issue on the repository for bugs or feature requests.
+Pull Requests: Fork the repository and submit your pull request with proper tests.
+Security: Report any security vulnerabilities privately for responsible disclosure.
