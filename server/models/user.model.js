@@ -42,7 +42,13 @@ const UserSchema = new Schema({
             },
             message : "Please enter a valid email address"
         }
-    }
+    },
+    password : {
+        type : String,
+        required : [true, "Password is required"], 
+        minlength: [6, "Password must be at least 6 characters"],
+        select: false
+    },
 })
 const User = model("User", UserSchema);
 export default User;
