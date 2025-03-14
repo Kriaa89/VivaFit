@@ -1,3 +1,15 @@
-node_modules
+# Dependency folder
+node_modules/
+
+# Environment variables
 .env
+
+# Sensitive files
 firebase-service-account.json
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
