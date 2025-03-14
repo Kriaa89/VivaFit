@@ -1,142 +1,81 @@
-# Backlog – Fitness & Workout Tracker
+# Fitness & Workout Tracker App – Product Backlog
 
-1️⃣ User Registration & Authentication  
-As a user, I want to sign up and log in securely, so that I can access my personalized fitness plans.  
-- User can register with email and password.  
-- User can log in using credentials.  
-- User authentication is managed with JWT firebase for session security.  
-- Error messages are displayed for invalid login attempts.
+This backlog outlines the key features and tasks for the Fitness & Workout Tracker application. It is organized into major functional areas, including core app features, the marketing website content, and necessary developer documentation updates. The language and structure are kept clear and student-friendly, following an industry-standard style for product backlogs.
 
-2️⃣ Dashboard Overview  
-As a user, when I log in, I want to see my workout progress, fitness goals, and recommended exercises, so that I can track my fitness journey easily.  
-- The dashboard displays total workouts completed.  
-- Goals and progress tracking are clearly visible.  
-- Recommended workout routines appear based on the user's profile and fitness goals.  
-- Smartwatch sync status is visible (if connected).  
-- A reminder or widget prompts the user to update their weekly weight if due.
+## 1. User Registration & Authentication
+- **Secure Sign-Up & Login:**  
+  Implement user registration and login using email/password with Firebase Authentication. Use JWT (JSON Web Token) for session security to keep user data safe.
+- **Post-Login Onboarding:**  
+  After the first login, prompt the user to complete a profile form collecting personal details – age, weight, height, fitness level, fitness goals, workout preferences, any dietary restrictions, and preferred workout times. Save these details to personalize the user’s experience.
+- **Error Handling:**  
+  Provide clear error messages for invalid sign-up or login attempts (e.g., incorrect credentials, email already in use) to guide users in correcting issues.
 
-3️⃣ Profile Management  
-As a user, I want to update my personal information (age, weight, height, fitness level), so that my workout plans remain personalized and relevant.  
-- Users can edit and save personal details such as name, age, weight, and fitness level.  
-- Updates are reflected in workout recommendations and progress tracking.  
-- A dedicated section allows users to view and manage their weekly weight logs and progress.
+## 2. Dashboard Overview
+- **Progress Summary:**  
+  Design a dashboard that gives users an overview of their fitness journey. Display key stats like number of completed workouts this week, current streaks, and progress toward their goals.
+- **Goal Tracking:**  
+  Show visual indicators (progress bars or summaries) of the user’s fitness goals (e.g., weekly workout target or weight loss goal) so they can easily track how close they are to achieving them.
+- **Recommended Exercises & Insights:**  
+  Highlight a few recommended workouts or exercises for the day, tailored to the user’s profile and recent activity. Optionally include AI-generated insights or tips (e.g., congratulatory notes on progress or recommendations for a recovery day).
+- **Smartwatch Sync Status:**  
+  If the user has connected a smartwatch or fitness tracker, display a status indicator (e.g., “Synced with Fitbit”) to confirm data is up-to-date.
+- **Weekly Weight Reminder:**  
+  Include a widget or reminder on the dashboard prompting the user to update their weight once a week with a simple notification or designated section.
 
-4️⃣ Tailored Workout Plans  
-As a user, I want to receive workout plans based on my body type, available equipment, and fitness goals, so that I can follow a structured fitness routine.  
-- User inputs include fitness level, goals, and available equipment.  
-- The system generates a customized workout plan based on these inputs.  
-- AI-generated insights are available as an optional, supportive feature.  
-- Users can regenerate or modify the workout plan manually.
+## 3. Profile Management
+- **Editable Personal Details:**  
+  Allow users to view and update their profile information at any time, including name, age, weight, height, and fitness level. Ensure changes are saved securely.
+- **Fitness Preferences:**  
+  Enable users to adjust their fitness goals (e.g., switching from “Weight Loss” to “Muscle Gain”) and workout preferences (preferred workout time, equipment availability, etc.), influencing the app’s recommendations.
+- **Weight Log & Progress:**  
+  Provide a section where users can record their weight on a weekly basis (or other frequencies) with a history or chart depicting their weight loss/gain progress.
 
-5️⃣ Exercise Exploration  
-As a user, I want to browse exercises based on muscle groups and equipment, so that I can find exercises that suit my needs.  
-- Filters are provided for muscle groups (e.g., arms, legs, back, etc.).  
-- Filters are provided for equipment (e.g., dumbbells, resistance bands, etc.).  
-- The app integrates with the ExerciseDB API to display detailed exercise information.
+## 4. Tailored Workout Plans
+- **Personalized Plans:**  
+  Generate customized workout plans for each user based on profile data – body type, fitness level, available equipment, and fitness goals (e.g., weight loss, muscle gain, endurance). For instance, a beginner aiming for weight loss with no equipment might receive a bodyweight exercise plan.
+- **Modify or Regenerate Plans:**  
+  Allow users to adjust their plan manually, regenerate a new plan, or swap out certain exercises, ensuring flexibility and user comfort.
+- **AI-Generated Insights (Optional):**  
+  Optionally integrate an AI component to provide insights on the chosen plan, such as explaining the benefits of interval training for endurance.
 
-6️⃣ Workout Tracking  
-As a user, I want to log my completed workouts, so that I can monitor my progress over time.  
-- Users can mark workouts as complete.  
-- Each workout is recorded in the database with relevant details.  
-- Completed sessions are displayed on the dashboard and accessible in the workout history.
+## 5. Exercise Exploration
+- **Exercise Library:**  
+  Build a browsable library of exercises that users can explore, with the ability to search or filter by muscle group (e.g., chest, legs, core) and available equipment (e.g., dumbbells, resistance bands, no equipment).
+- **Filter & Search:**  
+  Implement advanced filtering by exercise type, difficulty level, or required equipment to help users quickly find exercises matching their interests.
+- **Detailed Exercise Info:**  
+  For each exercise, offer detailed instructions, identification of the primary muscles, equipment requirements, and include images or illustrations fetched via the ExerciseDB API or similar.
 
-7️⃣ Goal Setting & Progress Visualization  
-As a user, I want to set fitness goals and track my progress, so that I can stay motivated and see my improvements.  
-- Users can set both short-term and long-term goals.  
-- Graphical progress charts display metrics such as workout frequency, weight changes, and goal completion.  
-- The system provides notifications for milestone achievements.
+## 6. Workout Tracking
+- **Logging Workouts:**  
+  Enable users to log completed workouts, whether following a planned session or an ad-hoc exercise routine, with optional details like duration, reps, or notes.
+- **History & Dashboard Updates:**  
+  Record every logged workout in the user’s history and update the dashboard overview to reflect new workouts (e.g., increasing the weekly count, updating goal progress).
+- **Progress Feedback:**  
+  Display motivational feedback such as streaks (e.g., consecutive workout days) or messages like “You’ve completed 5/5 workouts this week – goal achieved!”
 
-8️⃣ Weekly Weight Update & Weight Loss Tracking  
-As a user, I want to update my weight on a weekly basis, so that I can monitor my weight loss or gain over time and adjust my fitness plan if needed.  
-**Acceptance Criteria:**  
-- The app prompts the user to enter their weight once a week via a dashboard reminder or notification.  
-- Each weight entry is stored with a timestamp, allowing for historical tracking.  
-- Graphs and charts visually display weight trends over time, highlighting progress toward target weight goals.  
-- The app compares current weight entries against user-set goals and displays percentage progress (e.g., "You've lost 4% of your target weight!").  
-- Feedback or recommendations are provided based on the weight trend, with positive reinforcement for progress or suggestions for plan adjustments if progress stalls.
+## 7. Goal Setting & Progress Visualization
+- **Goal Definition:**  
+  Allow users to set specific, measurable fitness goals, whether quantitative (e.g., “Exercise 4 times per week” or “Run 10 km this month”) or outcome-based (e.g., “Lose 5 kg in 3 months”), including deadlines or frequency targets.
+- **Visual Tracking:**  
+  Present progress toward each goal with visual tools like charts or graphs (e.g., bar charts for weekly workouts, line graphs for weight trends) and highlight milestones.
+- **Achievements & Notifications:**  
+  Trigger notifications or achievement badges when users reach their goals or milestones and send motivational reminders when deadlines approach.
 
-9️⃣ Smartwatch Integration  
-As a user, I want to sync my workouts with my smartwatch, so that my progress is automatically updated.  
-- An API connection is established with supported smartwatch devices (e.g., Apple Health, Fitbit).  
-- Workout data is automatically imported from the smartwatch.  
-- A manual sync option is available if automatic syncing fails.
+## 8. Weekly Weight Update & Weight Loss Tracking
+- **Regular Weight Logging:**  
+  Encourage users to update their weight every week, with a dashboard reminder prompting input.
+- **Trend Visualization:**  
+  Provide a dedicated view (e.g., a line graph) to plot weight trends over time, allowing users to track their progress.
+- **Insight & Recommendations:**  
+  Analyze logged weights to offer feedback, such as suggestions to adjust calorie intake or try new cardio if a plateau is detected, or positive reinforcement if progress is on track.
 
-🔟 Social & Community Features (Optional Future Feature)  
-As a user, I want to connect with other users, share progress, and join challenges, so that I can stay motivated and accountable.  
-- A community dashboard enables progress sharing among users.  
-- Options to participate in group challenges are provided.  
-- Users can connect with friends for workout comparisons and mutual motivation.
-
----
-
-## What the User Sees After Login
-
-**1️⃣ Dashboard:**  
-- A personalized welcome message displaying the user's name.  
-- A progress summary including total workouts completed and current fitness goals.  
-- Recommended workout routines curated from the user's profile data, with optional AI insights available as a supporting feature.  
-- A prominent "Start Workout" button for quick access.  
-- A widget or reminder prompting the user to update their weekly weight, if due.
-
-**2️⃣ Profile Section:**  
-- Editable fields for personal details (e.g., age, weight, fitness level, and fitness goals).  
-- A section dedicated to weekly weight logs and a visual summary of weight loss or gain over time.  
-- A historical log of workouts and milestones achieved.
-
-**3️⃣ Workout Plans:**  
-- A list of tailored workout routines generated based on the user's inputs.  
-- An exercise library with filters for muscle groups and equipment for manual exploration.
-
-**4️⃣ Progress Tracker:**  
-- Graphs and analytics displaying overall fitness progress, including workout history with timestamps.  
-- A dedicated area for visualizing weight trends and progress toward weight goals.
-
-**5️⃣ Smartwatch Sync (if enabled):**  
-- Display of the smartwatch connection status.  
-- Information on the last sync, ensuring the user's workout data is up-to-date.
-
----
-
-## Developer Setup Guide
-
-### Firebase Authentication Setup
-
-This application uses Firebase Authentication for secure user management. Follow these steps to configure it:
-
-1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/)
-2. Enable Authentication with Email/Password and Google sign-in methods
-3. Generate a new private key for Firebase Admin SDK:
-   - Go to Project Settings > Service Accounts
-   - Click "Generate New Private Key"
-   - Save the file securely
-
-### Environment Variables
-
-For local development:
-
-1. Copy `.env.template` to `.env` in the server directory:
-   ```
-   cp server/.env.template server/.env
-   ```
-2. Fill in your specific configuration values in the `.env` file
-
-### Firebase Service Account Setup (Choose ONE method)
-
-**Option 1: Using Environment Variables (Recommended for production)**
-
-Add the Firebase service account details to your `.env` file:
-```
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com
-```
-
-**Option 2: Using JSON file (For local development)**
-
-1. Copy `firebase-service-account.template.json` to `firebase-service-account.json`
-   ```
-   cp server/firebase-service-account.template.json server/firebase-service-account.json
-   ```
-2. Replace the placeholder values with your actual Firebase service account credentials
-
-⚠️ **IMPORTANT: Never commit `firebase-service-account.json` or your `.env` file to Git** ⚠️
+## 9. Smartwatch Integration
+- **Connect Fitness Devices:**  
+  Allow users to link their smartwatches or fitness tracking apps (e.g., Apple Health, Google Fit, Fitbit) so that workout data (runs, steps, heart rate) can be automatically synced.
+- **Auto-Sync Workouts:**  
+  Automatically integrate workout activity from connected devices into the app’s workout history, ensuring data consistency.
+- **Manual Sync Option:**  
+  Provide a “Sync Now” button for manual data syncing, especially useful when auto-syncing fails or after connecting a new device.
+- **Data Consistency:**  
+  Merge external device data (calories burned, duration, etc.) with the app's own tracking to provide a comprehensive view of the user’s fitness activities.
