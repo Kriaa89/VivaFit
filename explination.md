@@ -91,15 +91,13 @@ The system is divided into client and server components, connected via RESTful A
 
 ```mermaid
 graph TD
-    subgraph Server_MVC
-        Server (MVC)
+    subgraph "Server (MVC)"
         A[Express Router] --> B[Controller]
         B --> C[(Model: Mongoose)]
         B --> D[Firebase Admin]
     end
 
-    subgraph Client_React
-        Client (React)
+    subgraph "Client (React)"
         E[React Components] --> F[AuthContext & Custom Hooks]
         F --> G[API Services]
         G -->|HTTP Requests| A
