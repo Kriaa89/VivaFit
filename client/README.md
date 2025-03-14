@@ -26,26 +26,6 @@ The project is structured into clear directories:
 - **Social Login:** Integration with Google via Firebase enabling one-click signup/sigin.
 - **Protected Routes:** Ensuring secure access to member-only pages through route guards.
 
-### Dashboard & Progress Tracking
-- **Dashboard UI:** Displays user information, personalized greetings, and navigation to key features.
-- **Graphical Progress Charts:** Placeholder graphs and charts (recommend integrating libraries like Chart.js or Recharts) to display workout progress, completion stats, and historical data.
-- **Real-Time Updates:** Dynamic UI components automatically refreshing to show the latest fitness metrics.
-
-### Tailored Workout Plans
-- **Personalized Recommendations:** Workout plans are influenced by user preferences such as fitness level and desired goals.
-- **Plan Adjustments:** Features allow users to update their target plans based on progress and feedback.
-
-### Exercise Exploration
-- **Search & Filter Options:** Users can browse through an exercise library with filter options like muscle groups and equipment.
-- **API Integration Placeholder:** Designed to integrate with external exercise APIs to fetch detailed exercise demonstrations and tips.
-
-### Profile Management
-- **Editable User Information:** Users can update their personal details, view past activities, and adjust fitness preferences.
-- **Historical Data:** Supports review of previous workout logs and progress history to assist in tracking overall fitness journey.
-
-### Smartwatch Integration (If applicable)
-- **Device Sync:** Although currently in early stages, the project is structured to allow future integration with wearable devices (e.g., Fitbit, Apple Watch) for automatic workout syncing.
-
 ## UI/UX Design & Color Scheme
 - **Modern Visuals:** Uses vibrant gradients and dynamic imagery to create an energetic and motivating environment.
 - **Responsive Design:** The interface adapts to different devices and screen sizes ensuring usability on mobile, tablet, and desktop.
