@@ -61,9 +61,19 @@ function Login() {
         })
       });
       
+      if (!response.ok) {
+        const data = await response.json();
+        if (data.message && data.message.toLowerCase().includes("user already exists")) {
+          // Treat as success if the profile already exists.
+          return data;
+        }
+        throw new Error("Failed to create user profile");
+      }
+      
       return await response.json();
     } catch (error) {
       console.error("Error creating user profile:", error);
+      throw error;
     }
   }
 

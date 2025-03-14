@@ -93,8 +93,16 @@ function Register() {
           email
         })
       });
-
-      if (!response.ok) throw new Error("Failed to create user profile");
+      
+      // If response fails, check if it is due to an existing user.
+      if (!response.ok) {
+        const data = await response.json();
+        if (data.message && data.message.toLowerCase().includes("user already exists")) {
+          // Proceed without error if the user already exists.
+          return data;
+        }
+        throw new Error("Failed to create user profile");
+      }
       
       return await response.json();
     } catch (error) {
@@ -122,33 +130,15 @@ function Register() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-gray-700 text-sm font-semibold mb-2">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                <label htmlFor="firstName" className="block text-gray-700 text-sm font-semibold mb-2">First Name</label>
+                <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"/>
               </div>
               
               <div>
                 <label htmlFor="lastName" className="block text-gray-700 text-sm font-semibold mb-2">
                   Last Name
                 </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
               </div>
             </div>
             
