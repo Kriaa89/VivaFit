@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import AppNavbar from './AppNavbar';
 import Footer from './Footer';
-// Import the local image
+/* Import the local image */
 import abdallahPhoto from './5ca129e1-826f-47e1-ab6c-99e2e63534db.jpg';
 
 const AboutUs = () => {

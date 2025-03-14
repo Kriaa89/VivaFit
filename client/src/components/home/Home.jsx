@@ -9,7 +9,7 @@ const Home = () => {
       {/* Navbar */}
       <AppNavbar />
 
-      {/* Content - reduce padding-top to eliminate excess space */}
+      {/* Content - padding-top set to 16 to align with the navbar height */}
       <main className="flex-grow pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white">
@@ -36,7 +36,7 @@ const Home = () => {
             </div>
             <div className="md:w-1/2 mt-10 md:mt-0">
               <img
-                src="https://via.placeholder.com/600x400?text=VivaFit+Hero"
+                src="https://example.com/actual-image.jpg"
                 alt="Hero"
                 className="rounded-lg shadow-lg"
               />
