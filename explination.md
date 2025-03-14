@@ -56,21 +56,21 @@ The system is structured as a microservice comprising:
 ### Authentication Flow Diagram
 ```mermaid
 graph LR
-    A[User] -->|POST /auth/login| B[Auth Server]
-    B -->|Verify credentials| C[Database]
-    C -->|Credentials valid| B
-    B -->|200 OK + JWT Tokens| A
+    A[User Request] -->|POST /auth/login| B(Auth Server)
+    B -->|Verify Credentials| C(Database)
+    C -->|Credentials Valid| B
+    B -->|200 OK & JWT Issued| A
     A -->|GET /protected/resource| B
-    B -->|Validate JWT| B
-    B -->|Return resource data| A
+    B -->|JWT Validation| B
+    B -->|Return Resource Data| A
 
-    classDef userStyle fill:#F6EAD3,stroke:#B58900,stroke-width:2px;
-    classDef serverStyle fill:#DDF6FF,stroke:#268BD2,stroke-width:2px;
-    classDef dbStyle fill:#DFFFD6,stroke:#859900,stroke-width:2px;
-
+    classDef userStyle fill:#FFF3E0,stroke:#FF9800,stroke-width:2px;
+    classDef serverStyle fill:#E3F2FD,stroke:#2196F3,stroke-width:2px;
+    classDef dbStyle fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px;
     class A userStyle;
     class B serverStyle;
     class C dbStyle;
+```
 
 # Technical Architecture for VivaFit
 
@@ -94,29 +94,25 @@ The system is divided into client and server components, connected via RESTful A
 
 ```mermaid
 graph TD
-  subgraph Server (MVC)
-    A[Route: Express Router] --> B[Controller]
+  subgraph Server [Server (MVC)]
+    A[Express Router] --> B[Controller]
     B --> C[(Model: Mongoose)]
     B --> D[Firebase Admin]
-    C -->|Query Data| B
-    D -->|Token Verification| B
   end
 
-  subgraph Client (React)
-    E[🖥️ React Components (Pages)]
-    F[⚙️ AuthContext & Custom Hooks]
-    G[🔗 API Services]
-    E --> F
-    F --> G
+  subgraph Client [Client (React)]
+    E[React Components] --> F[AuthContext & Custom Hooks]
+    F --> G[API Services]
     G -->|HTTP Requests| A
   end
 
-classDef reactStyle fill:#DDF6FF,stroke:#268BD2,stroke-width:2px;
-classDef serverStyle fill:#F6EAD3,stroke:#B58900,stroke-width:2px;
-classDef dbStyle fill:#DFFFD6,stroke:#859900,stroke-width:2px;
-class E,F,G reactStyle;
-class A,B,D serverStyle;
-class C dbStyle;
+  classDef reactStyle fill:#E1F5FE,stroke:#0288D1,stroke-width:2px;
+  classDef serverStyle fill:#FFF3E0,stroke:#FF9800,stroke-width:2px;
+  classDef dbStyle fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px;
+  
+  class A,B,D serverStyle;
+  class C dbStyle;
+  class E,F,G reactStyle;
 ```
 
 ---
@@ -176,6 +172,38 @@ class C dbStyle;
   - Firebase Admin SDK combined with JWT ensures secure authentication and route protection.
 - **UI Consistency & Customization:**  
   - Tailwind CSS provides a consistent, maintainable design system that can be rapidly iterated on.
+
+---
+
+## Detailed Explanation
+
+### What We Have Done
+We have extended the documentation to include clear explanations of the recent changes, detailing the server and client components, the MVC pattern, and the tools used on each side. This update helps in understanding how each part contributes to the overall system.
+
+### Server-side (Backend) Explanation
+- **Node.js & Express:** Used to build robust RESTful APIs efficiently.
+- **Firebase Admin SDK:** Handles token verification and secure management of user authentication.
+- **MongoDB with Mongoose:** MongoDB is our datastore, and Mongoose provides a schema-based solution for data operations.
+- **Benefits:** This stack ensures scalability, security, and high performance for handling a large volume of authentication requests.
+
+### Client-side (Frontend) Explanation
+- **React with Vite:** React builds dynamic UI components while Vite provides a fast development server with hot module replacement (HMR).
+- **Tailwind CSS:** Offers a utility-first approach for rapid, consistent styling.
+- **React Router Dom & Axios:** These tools facilitate seamless routing and simplified HTTP requests.
+- **Benefits:** This stack enables quick iterations and a responsive, user-friendly interface.
+
+### MVC Pattern Explanation
+- **Model-View-Controller (MVC):**
+  - **Model:** Manages the data and business logic (e.g., via Mongoose for MongoDB).
+  - **View:** Provides the user interface (e.g., React components).
+  - **Controller:** Acts as an intermediary between models and views (e.g., Express controllers managing routes and logic).
+- **Benefits:** This pattern separates concerns, making development, testing, and maintenance more efficient.
+
+### Future Enhancements
+- **Scalability Improvements:** Integrate microservices or API gateways to better manage load.
+- **Enhanced Security:** Introduce rate limiting, advanced logging, and regular security audits.
+- **Improved User Experience:** Continuously refine UI/UX based on user feedback.
+- **Tooling Upgrades:** Explore new monitoring and analytics tools for both client and server environments.
 
 ---
 
