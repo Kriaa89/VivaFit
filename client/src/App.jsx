@@ -5,6 +5,7 @@ import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import Home from './components/home/Home';
+import AboutUs from './components/home/AboutUs';
 import './index.css'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
