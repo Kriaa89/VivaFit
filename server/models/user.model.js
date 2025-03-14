@@ -37,7 +37,6 @@ const UserSchema = new Schema({
         min: [0, "Age cannot be negative"],
         max: [120, "Age cannot exceed 120"]
     },
-    // Keep the rest of your user model as is
     height: {
         type: Number,
         min: [0, "Height cannot be negative"],
@@ -64,8 +63,7 @@ const UserSchema = new Schema({
     fitnessGoal: {
         type: String,
         enum: ["weight loss", "muscle gain", "endurance", "maintenance", "flexibility", "general fitness"]
-    },
-    // Remove password field as Firebase handles authentication
+    }
 }, {
     timestamps: true,
 });

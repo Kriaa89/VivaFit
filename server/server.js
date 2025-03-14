@@ -24,18 +24,6 @@ app.get("/api/test", (req, res) => {
 app.use("/api/users", userRoutes);
 // Add other routes as needed
 
-// Improved error handling middleware
-app.use((err, req, res, next) => {
-    console.error("Unhandled error:", err);
-    console.error("Error stack:", err.stack);
-    
-    res.status(500).json({
-        error: true,
-        message: "Internal server error",
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
-
 // Standard error handling middleware
 app.use(errorHandler);
 

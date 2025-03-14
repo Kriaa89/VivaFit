@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 const serviceAccountPath = path.join(dirname(__dirname), 'firebase-service-account.json');
 const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-// Initialize Firebase Admin with the provided service account credentials
+// No extra development logs; only initialize Firebase Admin with the service account
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
