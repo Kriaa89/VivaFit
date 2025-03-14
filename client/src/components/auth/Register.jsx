@@ -47,7 +47,8 @@ function Register() {
       // Create user profile in database
       await createUserProfile(firstName, lastName, email, token);
       
-      navigate("/dashboard");
+      // Navigate to onboarding instead of dashboard
+      navigate("/onboarding");
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') {
         setError("This email is already in use. Please use a different email or try logging in instead.");
@@ -70,7 +71,8 @@ function Register() {
       const token = await user.getIdToken();
       await createUserProfile(firstName, lastName, email, token);
       
-      navigate("/dashboard");
+      // Navigate to onboarding instead of dashboard
+      navigate("/onboarding");
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
     } finally {

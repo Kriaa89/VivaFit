@@ -1,10 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import AppNavbar from "../home/AppNavbar";
-import Footer from "../home/Footer";
-import { getIdToken } from "../../utils/auth"; // Adjust the import path as necessary
+import { useAuth } from "../context/AuthContext";  
+import AppNavbar from "./home/AppNavbar";  // Fixed import path
+import Footer from "./home/Footer";  // Fixed import path
+import { getIdToken } from "../utils/auth";  // Fixed import path
 
 const OnboardingForm = () => {
     const navigate = useNavigate();

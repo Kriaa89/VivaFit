@@ -19,7 +19,8 @@ function Login() {
       setError("");
       setLoading(true);
       await login(email, password);
-      navigate("/dashboard");
+      // Navigate to onboarding instead of dashboard
+      navigate("/onboarding");
     } catch (err) {
       setError("Failed to sign in. Check your credentials.");
     } finally {
@@ -38,7 +39,8 @@ function Login() {
       const token = await user.getIdToken();
       await createUserProfileFromGoogle(firstName, lastName, email, token);
       
-      navigate("/dashboard");
+      // Navigate to onboarding instead of dashboard
+      navigate("/onboarding");
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
     } finally {
