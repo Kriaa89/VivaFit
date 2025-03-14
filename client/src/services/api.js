@@ -1,49 +1,44 @@
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
 export function useApi() {
   const { getIdToken } = useAuth();
   const API_URL = "http://localhost:8080/api";
 
-  // Generic fetch function with authentication
-  const fetchWithAuth = async (endpoint, options = {}) => {
+  // Helper to build headers with JSON content type and Authorization token
+  const getHeaders = async () => {
     const token = await getIdToken();
-    
-    const defaultOptions = {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
+    return {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
     };
-    
-    const mergedOptions = {
-      ...defaultOptions,
-      ...options,
-      headers: {
-        ...defaultOptions.headers,
-        ...options.headers
-      }
-    };
+  };
 
-    const response = await fetch(`${API_URL}/${endpoint}`, mergedOptions);
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "API request failed");
+  // GET request to retrieve user profile
+  const getUserProfile = async () => {
+    try {
+      const headers = await getHeaders();
+      const response = await axios.get(`${API_URL}/users/profile`, { headers });
+      return response.data;
+    } catch (error) {
+      // Axios error handling
+      const message = error.response?.data?.message || "API request failed";
+      throw new Error(message);
     }
-    
-    return response.json();
   };
 
-  // API methods
-  return {
-    // User profile
-    getUserProfile: () => fetchWithAuth("users/profile"),
-    updateUserProfile: (data) => fetchWithAuth("users/profile", { 
-      method: "PATCH", 
-      body: JSON.stringify(data)
-    }),
-    
-    // Other API methods as needed
-    // ...
+  // PATCH request to update user profile with a JSON body
+  const updateUserProfile = async (data) => {
+    try {
+      const headers = await getHeaders();
+      const response = await axios.patch(`${API_URL}/users/profile`, data, { headers });
+      return response.data;
+    } catch (error) {
+      // Axios error handling
+      const message = error.response?.data?.message || "API request failed";
+      throw new Error(message);
+    }
   };
+
+  return { getUserProfile, updateUserProfile };
 }
