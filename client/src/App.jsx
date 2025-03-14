@@ -28,7 +28,7 @@ function App() {
             {/* Redirect root to login or dashboard */}
             <Route 
             path="/" 
-            element={<Navigate to="/login" />} 
+            element={<Navigate to="/home" />} 
           />
           { /* catch all - redirect to login */}
           </Routes>
