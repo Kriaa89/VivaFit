@@ -138,7 +138,7 @@ function Register() {
                 <label htmlFor="lastName" className="block text-gray-700 text-sm font-semibold mb-2">
                   Last Name
                 </label>
-                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"/>
               </div>
             </div>
             
