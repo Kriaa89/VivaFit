@@ -55,7 +55,7 @@ The system is structured as a microservice comprising:
 
 ### Authentication Flow Diagram
 ```mermaid
-graph LR
+flowchart LR
     A[User Request] -->|POST /auth/login| B(Auth Server)
     B -->|Verify Credentials| C(Database)
     C -->|Credentials Valid| B
@@ -64,12 +64,9 @@ graph LR
     B -->|JWT Validation| B
     B -->|Return Resource Data| A
 
-    classDef userStyle fill:#FFF3E0,stroke:#FF9800,stroke-width:2px;
-    classDef serverStyle fill:#E3F2FD,stroke:#2196F3,stroke-width:2px;
-    classDef dbStyle fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px;
-    class A userStyle;
-    class B serverStyle;
-    class C dbStyle;
+    style A fill:#FFF3E0,stroke:#FF9800,stroke-width:2px
+    style B fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style C fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px
 ```
 
 # Technical Architecture for VivaFit
