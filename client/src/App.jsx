@@ -4,6 +4,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
+import Home from './components/home/Home';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <AuthProvider>
           <Routes>
             {/* Public Routes */}
+            <Route path="/home" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
