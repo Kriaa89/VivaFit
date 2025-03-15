@@ -31,7 +31,7 @@ const AboutUs = () => {
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
                 <img 
-                  src="https://via.placeholder.com/600x400?text=VivaFit+Story" 
+                  src="https://placehold.co/600x400?text=VivaFit+Story" 
                   alt="Our Story" 
                   className="rounded-lg shadow-lg w-full"
                 />

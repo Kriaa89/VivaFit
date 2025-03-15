@@ -36,7 +36,7 @@ const Home = () => {
             </div>
             <div className="md:w-1/2 mt-10 md:mt-0">
               <img
-                src="https://example.com/actual-image.jpg"
+                src="https://placehold.co/600x400?text=Hero+Image"
                 alt="Hero"
                 className="rounded-lg shadow-lg"
               />

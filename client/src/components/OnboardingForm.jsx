@@ -8,7 +8,7 @@ import { getIdToken } from "../utils/auth";  // Fixed import path
 
 const OnboardingForm = () => {
     const navigate = useNavigate();
-    const { currentUser, setCurrentUser } = useAuth();
+    const { currentUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -68,27 +68,44 @@ const OnboardingForm = () => {
 
         try {
             const token = await getIdToken();
+            if (!token) {
+                setError("Authentication token is missing. Please log in again.");
+                setLoading(false);
+                return;
+            }
+
             const profileData = {
-                age: formData.age,
-                weight: formData.weight,
+                age: parseInt(formData.age),
+                weight: parseFloat(formData.weight),
                 weightUnit: formData.weightUnit,
-                height: formData.height,
+                height: parseFloat(formData.height),
                 heightUnit: formData.heightUnit,
                 fitnessLevel: formData.fitnessLevel,
                 fitnessGoal: formData.fitnessGoal,
-                workoutPreferences: formData.workoutPreferences,
-                dietaryRestrictions: formData.dietaryRestrictions,
-                preferredWorkoutTimes: formData.preferredWorkoutTimes
             };
-            await axios.patch("http://localhost:5000/api/user/profile", profileData, {
+
+            // Use port 8080 instead of 5000 and correct endpoint
+            await axios.patch("http://localhost:8080/api/users/profile", profileData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            
             setSuccess("Profile updated successfully!");
             setTimeout(() => {
                 navigate("/dashboard");
             }, 1500);
         } catch (err) {
-            setError(err.response?.data?.message || err.message || "An error occurred while updating your profile. Please try again later.");
+            console.error("Profile update error:", err);
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                setError(`Server error: ${err.response.data.message || err.response.statusText || "Unknown error"}`);
+            } else if (err.request) {
+                // The request was made but no response was received
+                setError("No response from server. Please check your internet connection or try again later.");
+            } else {
+                // Something happened in setting up the request
+                setError(`Error: ${err.message || "Unknown error occurred"}`);
+            }
         } finally {
             setLoading(false);
         }
