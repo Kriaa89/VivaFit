@@ -21,7 +21,7 @@ function Login() {
       await login(email, password);
       // Navigate to onboarding instead of dashboard
       navigate("/onboarding");
-    } catch (err) {
+    } catch {
       setError("Failed to sign in. Check your credentials.");
     } finally {
       setLoading(false);
