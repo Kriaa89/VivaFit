@@ -85,7 +85,7 @@ const OnboardingForm = () => {
             };
 
             // Use port 8080 instead of 5000 and correct endpoint
-            await axios.patch("http://localhost:8080/api/users/profile", profileData, {
+            await axios.patch("http://localhost:8000/api/users/profile", profileData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             

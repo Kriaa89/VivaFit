@@ -38,7 +38,7 @@ app.use(errorHandler);
 })();
 
 // Port configuration
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 
 // Start server
 app.listen(PORT, () => 

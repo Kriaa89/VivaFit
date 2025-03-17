@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 export function useApi() {
   const { getIdToken } = useAuth();
-  const API_URL = "http://localhost:8080/api";
+  const API_URL = "http://localhost:8000/api";
 
   // Helper to build headers with JSON content type and Authorization token
   const getHeaders = async () => {

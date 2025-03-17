@@ -93,7 +93,7 @@ function Register() {
   // Function to create user profile in your database
   async function createUserProfile(firstName, lastName, email, token) {
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("http://localhost:8000/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
