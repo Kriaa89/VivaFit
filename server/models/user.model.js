@@ -32,28 +32,45 @@ const UserSchema = new Schema({
             message: "Please enter a valid email address"
         }
     },
+    recommendations: [{
+        timestamp: {
+            type: Date,
+            default: Date.now
+        },
+        criteria: {
+            bodyType: String,
+            equipment: String,
+            goal: String,
+            fitnessLevel: String
+        },
+        exercises: [{
+            id: String,
+            name: String,
+            bodyPart: String
+        }]
+    }],
     age: {
         type: Number,
-        min: [0, "Age cannot be negative"],
-        max: [120, "Age cannot exceed 120"]
-    },
-    height: {
-        type: Number,
-        min: [0, "Height cannot be negative"],
-        unit: {
-            type: String,
-            enum: ["cm", "m", "in", "ft"],
-            default: "cm"
-        }
+        min: [13, "Must be at least 13 years old"],
+        max: [120, "Age must not exceed 120"]
     },
     weight: {
         type: Number,
-        min: [0, "Weight cannot be negative"],
-        unit: {
-            type: String,
-            enum: ["kg", "lb"],
-            default: "kg"
-        }
+        min: [20, "Weight must be at least 20"]
+    },
+    weightUnit: {
+        type: String,
+        enum: ["kg", "lb"],
+        default: "kg"
+    },
+    height: {
+        type: Number,
+        min: [50, "Height must be at least 50"]
+    },
+    heightUnit: {
+        type: String,
+        enum: ["cm", "in"],
+        default: "cm"
     },
     fitnessLevel: {
         type: String,
@@ -62,11 +79,9 @@ const UserSchema = new Schema({
     },
     fitnessGoal: {
         type: String,
-        enum: ["weight loss", "muscle gain", "endurance", "maintenance", "flexibility", "general fitness"]
+        enum: ["weight loss", "muscle gain", "endurance", "strength", "flexibility", "overall fitness"],
+        default: "overall fitness"
     }
-}, {
-    timestamps: true,
-});
+}, { timestamps: true });
 
-const User = model("User", UserSchema);
-export default User;
+export default model('User', UserSchema);
