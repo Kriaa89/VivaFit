@@ -19,7 +19,7 @@ function Login() {
       setError("");
       setLoading(true);
       await login(email, password);
-      navigate("/onboarding");
+      navigate("/dashboard");
     } catch {
       setError("Failed to sign in. Check your credentials.");
     } finally {
@@ -40,7 +40,7 @@ function Login() {
       }
       
       await createUserProfileFromGoogle(firstName, lastName, email, token);
-      navigate("/onboarding");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
     } finally {

@@ -5,42 +5,38 @@ import dbConnect from "./config/mongoose.config.js";
 import userRoutes from "./routes/user.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
-// Initialize express app
-const app = express();
-
 // Load environment variables
 dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 8000;
 
-// Middleware
+// Basic middleware
 app.use(express.json());
 app.use(cors());
 
-// Add a test endpoint to verify server is working
-app.get("/api/test", (req, res) => {
-    res.json({ message: "Server is working correctly" });
+// Simple health check
+app.get("/api/health", (_, res) => {
+  res.json({ status: "ok" });
 });
 
 // Routes
 app.use("/api/users", userRoutes);
-// Add other routes as needed
 
-// Standard error handling middleware
+// Error handling
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 app.use(errorHandler);
 
-// Connect to database with improved error handling
-(async () => {
-    try {
-        await dbConnect();
-    } catch (err) {
-        console.error("Database connection failed:", err);
-        // Continue running the server even if DB connection fails
-    }
-})();
-
-// Port configuration
-const PORT = process.env.PORT || 8000;
-
 // Start server
-app.listen(PORT, () => 
-    console.log(`Server is running on port ${PORT}`)
-);
+const startServer = async () => {
+  try {
+    await dbConnect();
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  } catch (error) {
+    console.error("Server startup failed:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

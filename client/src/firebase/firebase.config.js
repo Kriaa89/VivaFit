@@ -16,10 +16,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Configure Google provider (optional customizations)
-googleProvider.setCustomParameters({
-    prompt: 'select_account'
-});
+// Simple configuration for Google sign-in
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export { auth, googleProvider };
 export default app;
