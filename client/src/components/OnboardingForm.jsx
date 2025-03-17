@@ -94,7 +94,6 @@ const OnboardingForm = () => {
                 navigate("/dashboard");
             }, 1500);
         } catch (err) {
-            console.error("Profile update error:", err);
             if (err.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx

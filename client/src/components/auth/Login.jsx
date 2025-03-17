@@ -19,7 +19,6 @@ function Login() {
       setError("");
       setLoading(true);
       await login(email, password);
-      // Navigate to onboarding instead of dashboard
       navigate("/onboarding");
     } catch {
       setError("Failed to sign in. Check your credentials.");
@@ -34,12 +33,13 @@ function Login() {
       setLoading(true);
       
       const { user, firstName, lastName, email } = await signInWithGoogle();
+      const token = await user.getIdToken(true);
       
-      // Create user profile in your database
-      const token = await user.getIdToken();
+      if (!token) {
+        throw new Error("Failed to get authentication token from Google sign-in");
+      }
+      
       await createUserProfileFromGoogle(firstName, lastName, email, token);
-      
-      // Navigate to onboarding instead of dashboard
       navigate("/onboarding");
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
@@ -63,19 +63,19 @@ function Login() {
         })
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        const data = await response.json();
         if (data.message && data.message.toLowerCase().includes("user already exists")) {
-          // Treat as success if the profile already exists.
           return data;
         }
-        throw new Error("Failed to create user profile");
+        throw new Error(`Failed to create user profile: ${data.message || response.statusText}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
-      console.error("Error creating user profile:", error);
-      throw error;
+      // Don't throw the error - this allows the user to continue even if MongoDB registration fails
+      return { success: false, error: error.message };
     }
   }
 

@@ -27,11 +27,15 @@ app.use("/api/users", userRoutes);
 // Standard error handling middleware
 app.use(errorHandler);
 
-// Connect to database
-dbConnect().catch(err => {
-    console.error("Database connection failed:", err);
-    // Continue running the server even if DB connection fails
-});
+// Connect to database with improved error handling
+(async () => {
+    try {
+        await dbConnect();
+    } catch (err) {
+        console.error("Database connection failed:", err);
+        // Continue running the server even if DB connection fails
+    }
+})();
 
 // Port configuration
 const PORT = process.env.PORT || 8080;

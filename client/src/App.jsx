@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import './index.css';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Register from './components/auth/Register';
@@ -20,8 +21,6 @@ const PlaceholderPage = ({ pageName }) => (
     </div>
   </div>
 );
-
-import './index.css'
 
 function App() {
   return (
@@ -50,11 +49,8 @@ function App() {
               }
             />
             {/* Redirect root to home */}
-            <Route 
-            path="/" 
-            element={<Navigate to="/home" />} 
-          />
-          { /* catch all - redirect to login */}
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </AuthProvider>
       </Router>

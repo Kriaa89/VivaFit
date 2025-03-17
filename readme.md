@@ -17,8 +17,6 @@ This backlog outlines the key features and tasks for the Fitness & Workout Track
   Show visual indicators (progress bars or summaries) of the user’s fitness goals (for example, weekly workout target or weight loss goal) so they can easily track how close they are to achieving them.
 - **Recommended Exercises & Insights:**  
   Highlight a few recommended workouts or exercises for the day, tailored to the user’s profile and recent activity. Include AI-generated insights or tips (optional feature) – for example, a note congratulating the user on their progress or suggesting a recovery day if needed.
-- **Smartwatch Sync Status:**  
-  If the user has connected a smartwatch or fitness tracker, display a small status indicator (e.g., “Synced with Fitbit”) to confirm data is up-to-date.
 - **Weekly Weight Reminder:**  
   Include a widget or reminder on the dashboard prompting the user to update their weight once a week. This could be a simple notification or section saying “Don’t forget to log this week’s weight.”
 
@@ -90,7 +88,6 @@ This backlog outlines the key features and tasks for the Fitness & Workout Track
 - **Community Guidelines:**  
   If social features are added, ensure there are clear guidelines and moderation tools in place to keep the community supportive, safe, and positive.
 
----
 
 ## Home Page & Marketing Website Overview
 

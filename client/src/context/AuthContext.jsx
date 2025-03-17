@@ -5,8 +5,7 @@ import {
   onAuthStateChanged,
   signOut,
   updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider
+  signInWithPopup
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebase.config";
 

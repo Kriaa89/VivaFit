@@ -41,13 +41,19 @@ function Register() {
       // Register the user
       const user = await register(email, password, firstName, lastName);
       
-      // Get token using the function from the component level
-      const token = await getIdToken();
+      // Wait a moment to ensure Firebase auth state is updated
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const token = await user.getIdToken(true);
+      
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
       
       // Create user profile in database
       await createUserProfile(firstName, lastName, email, token);
       
-      // Navigate to onboarding instead of dashboard
+      // Navigate to onboarding
       navigate("/onboarding");
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') {
@@ -66,12 +72,16 @@ function Register() {
       setLoading(true);
       
       const { user, firstName, lastName, email } = await signInWithGoogle();
+      const token = await user.getIdToken(true);
+      
+      if (!token) {
+        throw new Error("Failed to get authentication token from Google sign-in");
+      }
       
       // Create user profile in your database
-      const token = await user.getIdToken();
       await createUserProfile(firstName, lastName, email, token);
       
-      // Navigate to onboarding instead of dashboard
+      // Navigate to onboarding
       navigate("/onboarding");
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
@@ -96,20 +106,21 @@ function Register() {
         })
       });
       
+      const data = await response.json();
+      
       // If response fails, check if it is due to an existing user.
       if (!response.ok) {
-        const data = await response.json();
         if (data.message && data.message.toLowerCase().includes("user already exists")) {
           // Proceed without error if the user already exists.
           return data;
         }
-        throw new Error("Failed to create user profile");
+        throw new Error(`Failed to create user profile: ${data.message || response.statusText}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
-      console.error("Error creating user profile:", error);
-      throw error;
+      // Don't throw the error - this allows the user to continue even if MongoDB registration fails
+      return { success: false, error: error.message };
     }
   }
 
