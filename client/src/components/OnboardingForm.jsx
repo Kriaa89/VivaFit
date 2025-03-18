@@ -62,28 +62,30 @@ const OnboardingForm = () => {
         setError("");
         setSuccess("");
         setLoading(true);
-
+    
         try {
             // Validate required fields
             if (!formData.age || !formData.weight || !formData.height) {
                 throw new Error("Age, weight, and height are required fields");
             }
-
+    
             // Get authentication token
             const token = await getIdToken();
             if (!token) {
                 throw new Error("Authentication token is missing. Please log in again.");
             }
-
+    
             // Parse and validate numerical inputs
             const profileData = validateAndParseFormData(formData);
-
+    
             // Send profile data to server
             const response = await updateUserProfile(profileData, token);
             
-            // Show success message and prepare for redirect
+            // Show success message
             setSuccess("Profile updated successfully!");
-            setRedirecting(true);
+            
+            // Navigate immediately to dashboard
+            navigate("/dashboard", { replace: true });
         } catch (err) {
             console.error("Profile update error:", err);
             setError(err.message || "An error occurred while updating your profile. Please try again.");

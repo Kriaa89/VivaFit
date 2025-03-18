@@ -8,87 +8,51 @@ import OnboardingForm from './components/OnboardingForm';
 import Dashboard from './components/dashboard/Dashboard';
 import Home from './components/home/Home';
 import AboutUs from './components/home/AboutUs';
-
-// Exercise Components
-import ExerciseList from './components/exercise/ExerciseList';
-import ExerciseDetail from './components/exercise/ExerciseDetail';
-import WorkoutGenerator from './components/exercise/WorkoutGenerator';
-import MuscleGroupPlanner from './components/exercise/MuscleGroupPlanner';
-import HomeGymSelector from './components/exercise/HomeGymSelector';
+import WorkoutPlanner from './components/exercise/WorkoutPlanner';
+import ExerciseBrowser from './components/exercise/ExerciseBrowser';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          
-          {/* Protected Routes - Onboarding */}
-          <Route path="/onboarding"
-            element={
-              <ProtectedRoute requireOnboarding="check">
-                <OnboardingForm />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Protected Routes - Dashboard */}
-          <Route path="/dashboard"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Protected Routes - Exercise Features */}
-          <Route path="/exercises"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <ExerciseList />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/exercises/:id"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <ExerciseDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/workout-generator"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <WorkoutGenerator />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/muscle-group-planner"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <MuscleGroupPlanner />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/home-gym-selector"
-            element={
-              <ProtectedRoute requireOnboarding={true}>
-                <HomeGymSelector />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Default Routes */}
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="*" element={<Navigate to="/home" />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
-  );
+    <>
+      <Router>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected Routes */}
+            <Route path="/onboarding"
+              element={
+                <ProtectedRoute requireOnboarding="check">
+                  <OnboardingForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/dashboard"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/workout-planner"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <WorkoutPlanner />
+                </ProtectedRoute>
+              }
+            />
+            {/* Redirect root to home */}
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="*" element={<Navigate to="/home" />} />
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </>
+  )
 }
 
-export default App;
+export default App

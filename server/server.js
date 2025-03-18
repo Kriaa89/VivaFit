@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnect from "./config/mongoose.config.js";
 import userRoutes from "./routes/user.routes.js";
-import recommendationRoutes from "./routes/recommendation.routes.js";
 import exerciseRoutes from "./routes/exercise.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
