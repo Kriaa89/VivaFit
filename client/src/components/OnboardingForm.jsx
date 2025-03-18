@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import AppNavbar from "./home/AppNavbar";
 import Footer from "./home/Footer";
 import { getIdToken } from "../utils/auth";
@@ -12,7 +11,6 @@ import { getIdToken } from "../utils/auth";
  */
 const OnboardingForm = () => {
     const navigate = useNavigate();
-    const { currentUser } = useAuth(); // currentUser is imported but never used
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -87,7 +85,6 @@ const OnboardingForm = () => {
             // Navigate immediately to dashboard
             navigate("/dashboard", { replace: true });
         } catch (err) {
-            console.error("Profile update error:", err);
             setError(err.message || "An error occurred while updating your profile. Please try again.");
         } finally {
             setLoading(false);
@@ -148,7 +145,6 @@ const OnboardingForm = () => {
             
             return response.data;
         } catch (error) {
-            console.error('Profile update error:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || error.message || "Failed to update profile");
         }
     };

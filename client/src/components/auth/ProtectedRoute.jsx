@@ -50,7 +50,6 @@ const ProtectedRoute = ({ children, requireOnboarding = false }) => {
             setHasCompletedOnboarding(false);
           }
         } catch (error) {
-          console.error("Error checking onboarding status:", error);
           setHasCompletedOnboarding(false);
         }
       }

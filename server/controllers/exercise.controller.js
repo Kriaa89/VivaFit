@@ -1,5 +1,4 @@
 import asyncHandler from 'express-async-handler';
-import exerciseService from '../service/exercise.service.js';
 
 // Cache for expensive API calls
 const cache = {
@@ -19,11 +18,8 @@ const isCacheValid = (cacheEntry) => {
 export const getAllExercises = asyncHandler(async (req, res) => {
   if (!isCacheValid(cache.exercises)) {
     const exercises = await exerciseService.getExercises();
-    if (exercises && exercises.length > 0) {
-      cache.exercises = {
-        data: exercises,
-        timestamp: Date.now()
-      };
+    if (exercises?.length > 0) {
+      cache.exercises = { data: exercises, timestamp: Date.now() };
     }
   }
 
@@ -32,107 +28,70 @@ export const getAllExercises = asyncHandler(async (req, res) => {
     throw new Error('Exercise data temporarily unavailable');
   }
 
-  res.json({
-    success: true,
-    data: cache.exercises.data
-  });
+  res.json({ success: true, data: cache.exercises.data });
 });
 
 export const getExerciseById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  
   if (!id) {
     res.status(400);
     throw new Error('Exercise ID is required');
   }
 
   const exercise = await exerciseService.getExerciseById(id);
-  
   if (!exercise) {
     res.status(404);
     throw new Error('Exercise not found');
   }
 
-  res.json({
-    success: true,
-    data: exercise
-  });
+  res.json({ success: true, data: exercise });
 });
 
-export const getBodyParts = asyncHandler(async (req, res) => {
-  if (!isCacheValid(cache.bodyParts)) {
+const getCachedList = async (cacheKey, dataExtractor) => {
+  if (!isCacheValid(cache[cacheKey])) {
     const exercises = cache.exercises.data || await exerciseService.getExercises();
-    if (exercises && exercises.length > 0) {
-      const uniqueBodyParts = [...new Set(exercises.map(ex => ex.bodyPart))]
+    if (exercises?.length > 0) {
+      const uniqueItems = [...new Set(exercises.map(dataExtractor))]
         .filter(Boolean)
         .map(name => ({ name }));
       
-      cache.bodyParts = {
-        data: uniqueBodyParts,
-        timestamp: Date.now()
-      };
+      cache[cacheKey] = { data: uniqueItems, timestamp: Date.now() };
     }
   }
 
-  if (!cache.bodyParts.data) {
-    res.status(503);
-    throw new Error('Body part data temporarily unavailable');
+  if (!cache[cacheKey].data) {
+    throw new Error(`${cacheKey} data temporarily unavailable`);
   }
 
-  res.json({
-    success: true,
-    data: cache.bodyParts.data
-  });
+  return cache[cacheKey].data;
+};
+
+export const getBodyParts = asyncHandler(async (req, res) => {
+  try {
+    const data = await getCachedList('bodyParts', ex => ex.bodyPart);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(503);
+    throw error;
+  }
 });
 
 export const getEquipment = asyncHandler(async (req, res) => {
-  if (!isCacheValid(cache.equipment)) {
-    const exercises = cache.exercises.data || await exerciseService.getExercises();
-    if (exercises && exercises.length > 0) {
-      const uniqueEquipment = [...new Set(exercises.map(ex => ex.equipment))]
-        .filter(Boolean)
-        .map(name => ({ name }));
-      
-      cache.equipment = {
-        data: uniqueEquipment,
-        timestamp: Date.now()
-      };
-    }
-  }
-
-  if (!cache.equipment.data) {
+  try {
+    const data = await getCachedList('equipment', ex => ex.equipment);
+    res.json({ success: true, data });
+  } catch (error) {
     res.status(503);
-    throw new Error('Equipment data temporarily unavailable');
+    throw error;
   }
-
-  res.json({
-    success: true,
-    data: cache.equipment.data
-  });
 });
 
 export const getMuscles = asyncHandler(async (req, res) => {
-  if (!isCacheValid(cache.muscles)) {
-    const exercises = cache.exercises.data || await exerciseService.getExercises();
-    if (exercises && exercises.length > 0) {
-      const uniqueMuscles = [...new Set(exercises.map(ex => ex.target))]
-        .filter(Boolean)
-        .map(name => ({ name }));
-      
-      cache.muscles = {
-        data: uniqueMuscles,
-        timestamp: Date.now()
-      };
-    }
-  }
-
-  if (!cache.muscles.data) {
+  try {
+    const data = await getCachedList('muscles', ex => ex.target);
+    res.json({ success: true, data });
+  } catch (error) {
     res.status(503);
-    throw new Error('Muscle data temporarily unavailable');
+    throw error;
   }
-
-  res.json({
-    success: true,
-    data: cache.muscles.data
-  });
 });

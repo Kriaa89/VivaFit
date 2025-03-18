@@ -1,5 +1,4 @@
 import {model, Schema} from 'mongoose';
-import bcrypt from "bcrypt";
 
 const UserSchema = new Schema({
     firebaseUID: {
@@ -36,12 +35,6 @@ const UserSchema = new Schema({
         timestamp: {
             type: Date,
             default: Date.now
-        },
-        criteria: {
-            bodyType: String,
-            equipment: String,
-            goal: String,
-            fitnessLevel: String
         },
         exercises: [{
             id: String,

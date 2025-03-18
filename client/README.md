@@ -10,7 +10,6 @@ VivaFit is a modern fitness application that provides users with personalized wo
 - **React Router Dom** – Enables client-side routing and navigation.
 - **Axios** – For handling HTTP requests and API interactions.
 - **Firebase** – Used for social authentication and real-time features.
-- **Bootstrap** – Supplementary CSS framework for some layout elements.
 
 The project is structured into clear directories:
 - **src/components:** Reusable UI components (e.g., Navbar, Footer, Dashboard, Auth forms).
@@ -34,11 +33,6 @@ The project is structured into clear directories:
   - **Neutral and Vibrant Accents:** Balances ease of reading with energetic hues that reflect the fitness theme.
   - **Icons & SVGs:** Custom SVG icons are embedded to complement texts and support intuitive navigation.
 - **Design Principles:** The UI emphasizes clarity, simplicity, and accessibility, thereby creating a seamless user flow.
-
-## Diagrams & Graphs
-- **Component Diagram:** [Placeholder image] (Consider adding a diagram showing key components and their relationships.)
-- **Workflow Diagrams:** [Placeholder for authentication or dashboard workflows]
-- **Progress Charts:** Graphs and charts (using libraries like Chart.js) to represent weekly workouts, trends, and progress summaries.
 
 ## Usage Instructions & Setup
 1. **Clone the Repository**

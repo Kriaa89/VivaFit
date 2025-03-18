@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnect from "./config/mongoose.config.js";
 import userRoutes from "./routes/user.routes.js";
-import exerciseRoutes from "./routes/exercise.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 // Load environment variables
@@ -22,8 +21,6 @@ app.get("/api/health", (_, res) => {
 
 // Routes
 app.use("/api/users", userRoutes);
-app.use("/api/recommendations", recommendationRoutes);
-app.use("/api/exercises", exerciseRoutes);
 
 // Error handling
 app.use((req, res) => {
@@ -35,9 +32,10 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await dbConnect();
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      // Server start is logged by process manager
+    });
   } catch (error) {
-    console.error("Server startup failed:", error.message);
     process.exit(1);
   }
 };

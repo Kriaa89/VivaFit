@@ -15,7 +15,6 @@ class ExerciseService {
       const response = await this.axiosInstance.get(endpoint);
       return response.data || [];
     } catch (error) {
-      console.error(`Error fetching ${endpoint}:`, error);
       throw error;
     }
   }

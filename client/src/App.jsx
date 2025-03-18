@@ -5,11 +5,8 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import OnboardingForm from './components/OnboardingForm';
-import Dashboard from './components/dashboard/Dashboard';
 import Home from './components/home/Home';
 import AboutUs from './components/home/AboutUs';
-import WorkoutPlanner from './components/exercise/WorkoutPlanner';
-import ExerciseBrowser from './components/exercise/ExerciseBrowser';
 
 function App() {
   return (
@@ -35,13 +32,6 @@ function App() {
               element={
                 <ProtectedRoute requireOnboarding={true}>
                   <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/workout-planner"
-              element={
-                <ProtectedRoute requireOnboarding={true}>
-                  <WorkoutPlanner />
                 </ProtectedRoute>
               }
             />
