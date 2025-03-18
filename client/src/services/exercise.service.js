@@ -3,60 +3,47 @@ import axios from 'axios';
 class ExerciseService {
   constructor() {
     this.baseUrl = 'https://exercisedb-api.vercel.app/api/v1';
+    this.axiosInstance = axios.create({
+      baseURL: this.baseUrl,
+      timeout: 10000
+    });
   }
 
-  async getExercises(params = {}) {
+  // Generic fetch method with error handling
+  async fetchData(endpoint) {
     try {
-      // Build URL with query parameters
-      let url = `${this.baseUrl}/exercises`;
-      
-      const queryParams = new URLSearchParams();
-      if (params.limit) queryParams.append('limit', params.limit);
-      if (params.offset) queryParams.append('offset', params.offset);
-      
-      // Add query string to URL if there are parameters
-      if (queryParams.toString()) {
-        url += `?${queryParams.toString()}`;
-      }
-
-      const response = await axios.get(url);
-      return response.data.data || [];
+      const response = await this.axiosInstance.get(endpoint);
+      return response.data || [];
     } catch (error) {
-      console.error('Error fetching exercises:', error);
-      return [];
+      console.error(`Error fetching ${endpoint}:`, error);
+      throw error;
     }
   }
 
-  async getBodyParts() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/bodyparts`);
-      return response.data.data || [];
-    } catch (error) {
-      console.error('Error fetching body parts:', error);
-      return [];
-    }
+  // Fetch all exercises
+  getExercises() {
+    return this.fetchData('/exercises');
   }
 
-  async getEquipment() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/equipments`);
-      return response.data.data || [];
-    } catch (error) {
-      console.error('Error fetching equipment:', error);
-      return [];
-    }
+  // Fetch exercise by ID
+  getExerciseById(id) {
+    return this.fetchData(`/exercises/${id}`);
   }
 
-  async getMuscles() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/muscles`);
-      return response.data.data || [];
-    } catch (error) {
-      console.error('Error fetching muscles:', error);
-      return [];
-    }
+  // Fetch all body parts
+  getBodyParts() {
+    return this.fetchData('/bodyparts');
+  }
+
+  // Fetch all equipment
+  getEquipment() {
+    return this.fetchData('/equipments');
+  }
+
+  // Fetch all target muscles
+  getMuscles() {
+    return this.fetchData('/muscles');
   }
 }
 
-const exerciseService = new ExerciseService();
-export default exerciseService;
+export default new ExerciseService();
