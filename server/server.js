@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import dbConnect from "./config/mongoose.config.js";
 import userRoutes from "./routes/user.routes.js";
 import recommendationRoutes from "./routes/recommendation.routes.js";
+import exerciseRoutes from "./routes/exercise.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 // Load environment variables
@@ -23,6 +24,7 @@ app.get("/api/health", (_, res) => {
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/exercises", exerciseRoutes);
 
 // Error handling
 app.use((req, res) => {
