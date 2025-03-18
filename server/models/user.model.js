@@ -31,17 +31,6 @@ const UserSchema = new Schema({
             message: "Please enter a valid email address"
         }
     },
-    recommendations: [{
-        timestamp: {
-            type: Date,
-            default: Date.now
-        },
-        exercises: [{
-            id: String,
-            name: String,
-            bodyPart: String
-        }]
-    }],
     age: {
         type: Number,
         min: [13, "Must be at least 13 years old"],
