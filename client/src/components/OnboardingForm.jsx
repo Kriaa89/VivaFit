@@ -1,10 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";  
-import AppNavbar from "./home/AppNavbar";  // Fixed import path
-import Footer from "./home/Footer";  // Fixed import path
-import { getIdToken } from "../utils/auth";  // Fixed import path
+import { useAuth } from "../context/AuthContext";
+import AppNavbar from "./home/AppNavbar";
+import Footer from "./home/Footer";
+import { getIdToken } from "../utils/auth";
 
 const OnboardingForm = () => {
     const navigate = useNavigate();
@@ -39,33 +39,6 @@ const OnboardingForm = () => {
         setError("");
         setLoading(true);
 
-        if (!formData.age || !formData.weight || !formData.height) {
-            setError("Age, weight, and height are required.");
-            setLoading(false);
-            return;
-        }
-
-        const age = parseInt(formData.age);
-        if (isNaN(age) || age < 13 || age > 70) {
-            setError("Please enter a valid age between 13 and 70.");
-            setLoading(false);
-            return;
-        }
-
-        const weight = parseFloat(formData.weight);
-        if (isNaN(weight) || weight <= 0) {
-            setError("Please enter a valid weight.");
-            setLoading(false);
-            return;
-        }
-
-        const height = parseFloat(formData.height);
-        if (isNaN(height) || height <= 0) {
-            setError("Please enter a valid height.");
-            setLoading(false);
-            return;
-        }
-
         try {
             const token = await getIdToken();
             if (!token) {
@@ -75,16 +48,15 @@ const OnboardingForm = () => {
             }
 
             const profileData = {
-                age: parseInt(formData.age),
-                weight: parseFloat(formData.weight),
+                age: parseInt(formData.age) || 0,
+                weight: parseFloat(formData.weight) || 0,
                 weightUnit: formData.weightUnit,
-                height: parseFloat(formData.height),
+                height: parseFloat(formData.height) || 0,
                 heightUnit: formData.heightUnit,
                 fitnessLevel: formData.fitnessLevel,
                 fitnessGoal: formData.fitnessGoal,
             };
 
-            // Use port 8080 instead of 5000 and correct endpoint
             await axios.patch("http://localhost:8000/api/users/profile", profileData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -94,17 +66,7 @@ const OnboardingForm = () => {
                 navigate("/dashboard");
             }, 1500);
         } catch (err) {
-            if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                setError(`Server error: ${err.response.data.message || err.response.statusText || "Unknown error"}`);
-            } else if (err.request) {
-                // The request was made but no response was received
-                setError("No response from server. Please check your internet connection or try again later.");
-            } else {
-                // Something happened in setting up the request
-                setError(`Error: ${err.message || "Unknown error occurred"}`);
-            }
+            setError("An error occurred while updating your profile. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -140,7 +102,7 @@ const OnboardingForm = () => {
                                     <label htmlFor="age" className="block text-gray-700 text-sm font-medium mb-2">
                                         Age <span className="text-red-500">*</span>
                                     </label>
-                                    <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} min="13" max="70" placeholder="Your age" required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                    <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} placeholder="Your age" required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                 </div>
 
                                 <div className="col-span-2">
@@ -148,7 +110,7 @@ const OnboardingForm = () => {
                                         Weight <span className="text-red-500">*</span>
                                     </label>
                                     <div className="flex space-x-2">
-                                        <input type="number" id="weight" name="weight" value={formData.weight} onChange={handleChange} step="0.1" min="0.1" placeholder="Your weight" required className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                        <input type="number" id="weight" name="weight" value={formData.weight} onChange={handleChange} placeholder="Your weight" required className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                         <select name="weightUnit" value={formData.weightUnit} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                                             <option value="kg">kg</option>
                                             <option value="lb">lb</option>
@@ -161,7 +123,7 @@ const OnboardingForm = () => {
                                         Height <span className="text-red-500">*</span>
                                     </label>
                                     <div className="flex space-x-2">
-                                        <input type="number" id="height" name="height" value={formData.height} onChange={handleChange} step="0.1" min="1" placeholder="Your height" required className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                                        <input type="number" id="height" name="height" value={formData.height} onChange={handleChange} placeholder="Your height" required className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                         <select name="heightUnit" value={formData.heightUnit} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                                             <option value="cm">cm</option>
                                             <option value="m">m</option>

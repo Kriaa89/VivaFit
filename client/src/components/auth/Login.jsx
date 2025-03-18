@@ -19,8 +19,28 @@ function Login() {
       setError("");
       setLoading(true);
       await login(email, password);
-      navigate("/dashboard");
-    } catch {
+      
+      // Check if user has completed onboarding
+      const token = await getIdToken();
+      const response = await fetch("http://localhost:8000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const profile = await response.json();
+        // If user has completed onboarding (has profile data), go to dashboard
+        if (profile.age && profile.weight && profile.height) {
+          navigate("/dashboard");
+        } else {
+          // If not completed onboarding, redirect to onboarding
+          navigate("/onboarding");
+        }
+      } else {
+        navigate("/onboarding");
+      }
+    } catch (err) {
       setError("Failed to sign in. Check your credentials.");
     } finally {
       setLoading(false);

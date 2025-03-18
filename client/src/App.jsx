@@ -22,22 +22,25 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/onboarding" element={<OnboardingForm />} />
             
-            {/* Exercise Features */}
-            <Route path="/exercises" element={<ExerciseBrowser />} />
-
             {/* Protected Routes */}
+            <Route path="/onboarding"
+              element={
+                <ProtectedRoute requireOnboarding="check">
+                  <OnboardingForm />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute requireOnboarding={true}>
                   <Dashboard />
                 </ProtectedRoute>
               }
             />
             <Route path="/workout-planner"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute requireOnboarding={true}>
                   <WorkoutPlanner />
                 </ProtectedRoute>
               }
