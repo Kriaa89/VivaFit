@@ -1,39 +1,37 @@
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { getIdToken } from "../utils/auth";
+
+const BASE_URL = "http://localhost:8000/api";
+
+async function makeRequest(method, endpoint, data = null) {
+  try {
+    const token = await getIdToken();
+    const config = {
+      method,
+      url: `${BASE_URL}${endpoint}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      ...(data && { data })
+    };
+
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
+}
 
 export function useApi() {
-  const { getIdToken } = useAuth();
-  const API_URL = "http://localhost:8000/api";
-
-  // Simple helper for API calls
-  const makeRequest = async (method, endpoint, data = null) => {
-    try {
-      const token = await getIdToken();
-      const config = {
-        method,
-        url: `${API_URL}${endpoint}`,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        ...(data && { data })
-      };
-
-      const response = await axios(config);
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || "API request failed");
-    }
-  };
-
   return {
-    // User related endpoints
+    // User endpoints
+    createUserProfile: (data) => makeRequest('post', '/users', data),
     getUserProfile: () => makeRequest('get', '/users/profile'),
     updateUserProfile: (data) => makeRequest('patch', '/users/profile', data),
 
-    // Recommendation related endpoints
-    getRecommendations: (criteria) => makeRequest('post', '/recommendations', criteria),
-    getRecommendationHistory: () => makeRequest('get', '/recommendations/history'),
-    deleteRecommendation: (recommendationId) => makeRequest('delete', `/recommendations/${recommendationId}`)
+    // Workout recommendations
+    getRecommendations: (criteria) => makeRequest('post', '/recommendations', criteria)
   };
 }
