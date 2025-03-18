@@ -4,7 +4,11 @@ import { useNavigate, Link } from "react-router-dom";
 import AppNavbar from "../home/AppNavbar";
 import Footer from "../home/Footer";
 
+/**
+ * Register component for user signup with email/password or Google
+ */
 function Register() {
+  // Form state
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -14,22 +18,27 @@ function Register() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { register, getIdToken, signInWithGoogle } = useAuth();
+  
+  // Auth context and navigation
+  const { register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prevData => ({
+      ...prevData,
       [name]: value
-    });
+    }));
   };
 
+  /**
+   * Handle email/password registration
+   */
   async function handleSubmit(e) {
     e.preventDefault();
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
-    // Validation
+    // Validate passwords match
     if (password !== confirmPassword) {
       return setError("Passwords do not match");
     }
@@ -38,12 +47,13 @@ function Register() {
       setError("");
       setLoading(true);
       
-      // Register the user
+      // Register with Firebase
       const user = await register(email, password, firstName, lastName);
       
-      // Wait a moment to ensure Firebase auth state is updated
+      // Wait briefly for Firebase auth state to update
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Get auth token
       const token = await user.getIdToken(true);
       
       if (!token) {
@@ -66,6 +76,9 @@ function Register() {
     }
   }
 
+  /**
+   * Handle Google sign in
+   */
   async function handleGoogleSignIn() {
     try {
       setError("");
@@ -78,7 +91,7 @@ function Register() {
         throw new Error("Failed to get authentication token from Google sign-in");
       }
       
-      // Create user profile in your database
+      // Create user profile in database
       await createUserProfile(firstName, lastName, email, token);
       
       // Navigate to onboarding
@@ -90,7 +103,9 @@ function Register() {
     }
   }
 
-  // Function to create user profile in your database
+  /**
+   * Create user profile in backend database
+   */
   async function createUserProfile(firstName, lastName, email, token) {
     try {
       const response = await fetch("http://localhost:8080/api/users", {
@@ -99,19 +114,14 @@ function Register() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email
-        })
+        body: JSON.stringify({ firstName, lastName, email })
       });
       
       const data = await response.json();
       
-      // If response fails, check if it is due to an existing user.
+      // Continue if user already exists
       if (!response.ok) {
         if (data.message && data.message.toLowerCase().includes("user already exists")) {
-          // Proceed without error if the user already exists.
           return data;
         }
         throw new Error(`Failed to create user profile: ${data.message || response.statusText}`);
@@ -119,42 +129,61 @@ function Register() {
       
       return data;
     } catch (error) {
-      // Don't throw the error - this allows the user to continue even if MongoDB registration fails
+      // Don't throw error - allows user to continue even if MongoDB registration fails
+      console.error("Profile creation error:", error);
       return { success: false, error: error.message };
     }
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navbar */}
       <AppNavbar />
 
-      {/* Main Content */}
       <main className="flex-grow pt-16 bg-gray-100">
         <div className="max-w-2xl mx-auto mt-10 mb-10 bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Sign Up</h2>
           
+          {/* Error message */}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
             </div>
           )}
           
+          {/* Registration form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-gray-700 text-sm font-semibold mb-2">First Name</label>
-                <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"/>
+                <input 
+                  type="text" 
+                  id="firstName" 
+                  name="firstName" 
+                  value={formData.firstName} 
+                  onChange={handleChange} 
+                  required 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
               </div>
               
               <div>
                 <label htmlFor="lastName" className="block text-gray-700 text-sm font-semibold mb-2">
                   Last Name
                 </label>
-                <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"/>
+                <input 
+                  type="text" 
+                  id="lastName" 
+                  name="lastName" 
+                  value={formData.lastName} 
+                  onChange={handleChange} 
+                  required 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
               </div>
             </div>
             
+            {/* Email field */}
             <div>
               <label htmlFor="email" className="block text-gray-700 text-sm font-semibold mb-2">
                 Email
@@ -171,6 +200,7 @@ function Register() {
               />
             </div>
             
+            {/* Password fields */}
             <div>
               <label htmlFor="password" className="block text-gray-700 text-sm font-semibold mb-2">
                 Password
@@ -203,12 +233,13 @@ function Register() {
               />
             </div>
             
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
               className={`w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md ${loading && 'opacity-70 cursor-not-allowed'}`}
             >
-              Sign Up
+              {loading ? 'Processing...' : 'Sign Up'}
             </button>
           </form>
           
@@ -250,6 +281,7 @@ function Register() {
             </button>
           </div>
           
+          {/* Login link */}
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
@@ -261,7 +293,6 @@ function Register() {
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

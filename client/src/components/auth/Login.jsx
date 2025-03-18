@@ -4,14 +4,21 @@ import { useNavigate, Link } from "react-router-dom";
 import AppNavbar from "../home/AppNavbar";
 import Footer from "../home/Footer";
 
+/**
+ * Login component for user authentication with email/password or Google
+ */
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
   const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
+  /**
+   * Handle email/password login
+   */
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -31,27 +38,12 @@ function Login() {
         throw new Error("Failed to get authentication token");
       }
 
-      // Check onboarding status
-      const response = await fetch("http://localhost:8080/api/users/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      // Navigate based on profile completion status
+      await checkProfileAndNavigate(token);
       
-      if (!response.ok) {
-        throw new Error("Failed to fetch user profile");
-      }
-
-      const profile = await response.json();
-      
-      // Navigate based on onboarding status
-      if (profile.success && profile.data && profile.data.age && profile.data.weight && profile.data.height) {
-        navigate("/dashboard");
-      } else {
-        navigate("/onboarding");
-      }
     } catch (err) {
       console.error("Login error:", err);
+      
       if (err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
         setError("Invalid email or password");
       } else if (err.code === "auth/too-many-requests") {
@@ -64,6 +56,9 @@ function Login() {
     }
   }
 
+  /**
+   * Handle Google sign in
+   */
   async function handleGoogleSignIn() {
     try {
       setError("");
@@ -76,9 +71,24 @@ function Login() {
         throw new Error("Failed to get authentication token from Google sign-in");
       }
       
+      // Create or update user profile in database
       await createUserProfileFromGoogle(firstName, lastName, email, token);
       
-      // Check onboarding status before navigation
+      // Navigate based on profile completion status
+      await checkProfileAndNavigate(token);
+      
+    } catch (err) {
+      setError(err.message || "Failed to sign in with Google");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /**
+   * Check user profile and navigate to appropriate page
+   */
+  async function checkProfileAndNavigate(token) {
+    try {
       const response = await fetch("http://localhost:8080/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`
@@ -91,19 +101,22 @@ function Login() {
 
       const profile = await response.json();
       
-      // Navigate based on onboarding status
-      if (profile.success && profile.data && profile.data.age && profile.data.weight && profile.data.height) {
-        navigate("/dashboard");
-      } else {
-        navigate("/onboarding");
-      }
-    } catch (err) {
-      setError(err.message || "Failed to sign in with Google");
-    } finally {
-      setLoading(false);
+      // Navigate to dashboard if onboarding is complete, otherwise to onboarding
+      const hasCompletedOnboarding = profile.success && profile.data && 
+        profile.data.age && profile.data.weight && profile.data.height;
+        
+      navigate(hasCompletedOnboarding ? "/dashboard" : "/onboarding");
+      
+    } catch (error) {
+      console.error("Profile check error:", error);
+      // Default to onboarding if profile check fails
+      navigate("/onboarding");
     }
   }
 
+  /**
+   * Create or update user profile from Google sign-in data
+   */
   async function createUserProfileFromGoogle(firstName, lastName, email, token) {
     try {
       const response = await fetch("http://localhost:8080/api/users", {
@@ -112,35 +125,29 @@ function Login() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email
-        })
+        body: JSON.stringify({ firstName, lastName, email })
       });
       
       const data = await response.json();
       
-      if (!response.ok) {
-        if (data.message && data.message.toLowerCase().includes("user already exists")) {
-          return data;
-        }
-        throw new Error(`Failed to create user profile: ${data.message || response.statusText}`);
+      // User already exists is not an error
+      if (!response.ok && 
+          !(data.message && data.message.toLowerCase().includes("user already exists"))) {
+        console.error("Profile creation warning:", data.message || response.statusText);
       }
       
       return data;
     } catch (error) {
-      // Don't throw the error - this allows the user to continue even if MongoDB registration fails
+      // Don't throw error - allow the login flow to continue
+      console.error("Profile creation error:", error);
       return { success: false, error: error.message };
     }
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navbar */}
       <AppNavbar />
 
-      {/* Main Content */}
       <main className="flex-grow pt-16 bg-gray-100">
         <div className="max-w-md mx-auto mt-10 mb-10 bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Log In</h2>
@@ -240,7 +247,6 @@ function Login() {
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

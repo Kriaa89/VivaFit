@@ -12,7 +12,7 @@ import { getIdToken } from "../utils/auth";
  */
 const OnboardingForm = () => {
     const navigate = useNavigate();
-    const { currentUser } = useAuth();
+    const { currentUser } = useAuth(); // currentUser is imported but never used
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -36,7 +36,6 @@ const OnboardingForm = () => {
     useEffect(() => {
         if (success && redirecting) {
             const timer = setTimeout(() => {
-                console.log("Redirecting to dashboard...");
                 navigate("/dashboard", { replace: true });
             }, 1500);
             
@@ -62,7 +61,6 @@ const OnboardingForm = () => {
         e.preventDefault();
         setError("");
         setSuccess("");
-        setRedirecting(false);
         setLoading(true);
 
         try {
@@ -82,7 +80,6 @@ const OnboardingForm = () => {
 
             // Send profile data to server
             const response = await updateUserProfile(profileData, token);
-            console.log("Profile updated successfully:", response);
             
             // Show success message and prepare for redirect
             setSuccess("Profile updated successfully!");
@@ -144,7 +141,6 @@ const OnboardingForm = () => {
             );
 
             if (!response.data.success) {
-                console.error('Server response:', response.data);
                 throw new Error(response.data.message || "Failed to update profile");
             }
             
@@ -156,9 +152,7 @@ const OnboardingForm = () => {
     };
 
     // Manual navigation function as a backup
-    const goToDashboard = () => {
-        navigate("/dashboard", { replace: true });
-    };
+    const goToDashboard = () => navigate("/dashboard", { replace: true });
 
     return (
         <>
