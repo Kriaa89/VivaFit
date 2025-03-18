@@ -15,26 +15,9 @@ function Dashboard() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Welcome to your Dashboard</h2>
           <p className="text-gray-600 mb-8">Hello, {currentUser?.displayName || currentUser?.email}</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">Fitness Goals</h3>
-              <p className="text-gray-600">Your fitness goals will appear here</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">Workout Progress</h3>
-              <p className="text-gray-600">Your workout stats will appear here</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">Upcoming Features</h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-600">
-                <li>Nutrition tracking</li>
-                <li>Workout scheduling</li>
-                <li>Progress photos</li>
-                <li>Community challenges</li>
-              </ul>
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">Getting Started</h3>
+            <p className="text-gray-600">Welcome to VivaFit! Your profile has been set up successfully.</p>
           </div>
         </div>
       </main>

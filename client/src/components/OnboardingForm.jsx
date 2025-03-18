@@ -24,10 +24,7 @@ const OnboardingForm = () => {
         height: "",
         heightUnit: "cm",
         fitnessLevel: "beginner",
-        fitnessGoal: "general fitness",
-        workoutPreferences: "",
-        dietaryRestrictions: "",
-        preferredWorkoutTimes: ""
+        fitnessGoal: "general fitness"
     });
 
     // Effect to handle navigation after successful form submission
@@ -116,10 +113,7 @@ const OnboardingForm = () => {
             height,
             heightUnit: data.heightUnit,
             fitnessLevel: data.fitnessLevel,
-            fitnessGoal: data.fitnessGoal,
-            workoutPreferences: data.workoutPreferences || "",
-            dietaryRestrictions: data.dietaryRestrictions || "",
-            preferredWorkoutTimes: data.preferredWorkoutTimes || ""
+            fitnessGoal: data.fitnessGoal
         };
     };
 
@@ -246,31 +240,10 @@ const OnboardingForm = () => {
                                         <option value="weight loss">Weight Loss</option>
                                         <option value="muscle gain">Muscle Gain</option>
                                         <option value="endurance">Endurance</option>
-                                        <option value="maintenance">Maintenance</option>
+                                        <option value="strength">Strength</option>
                                         <option value="flexibility">Flexibility</option>
                                         <option value="general fitness">General Fitness</option>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Preferences Section */}
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-700 mb-3">Your Preferences</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label htmlFor="workoutPreferences" className="block text-gray-700 text-sm font-medium mb-2">Workout Preferences</label>
-                                    <textarea id="workoutPreferences" name="workoutPreferences" value={formData.workoutPreferences} onChange={handleChange} rows="2" placeholder="E.g., Outdoor running, strength training, yoga, home workouts" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="dietaryRestrictions" className="block text-gray-700 text-sm font-medium mb-2">Dietary Restrictions</label>
-                                    <textarea id="dietaryRestrictions" name="dietaryRestrictions" value={formData.dietaryRestrictions} onChange={handleChange} rows="2" placeholder="E.g., Vegetarian, gluten-free, dairy-free, allergies" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="preferredWorkoutTimes" className="block text-gray-700 text-sm font-medium mb-2">Preferred Workout Times</label>
-                                    <input type="text" id="preferredWorkoutTimes" name="preferredWorkoutTimes" value={formData.preferredWorkoutTimes} onChange={handleChange} placeholder="E.g., Mornings, weekends, after work" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                 </div>
                             </div>
                         </div>
