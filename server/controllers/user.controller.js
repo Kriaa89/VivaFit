@@ -42,16 +42,43 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 // Update user profile
 export const updateUserProfile = asyncHandler(async (req, res) => {
-    const user = req.dbUser;
-    const protectedFields = ['firebaseUID', 'email'];
-    
-    // Update allowed fields
-    Object.keys(req.body).forEach(key => {
-        if (!protectedFields.includes(key)) {
-            user[key] = req.body[key];
+    try {
+        const user = req.dbUser;
+        if (!user) {
+            return sendResponse(res, 404, false, null, 'User not found');
         }
-    });
 
-    await user.save();
-    sendResponse(res, 200, true, user);
+        const protectedFields = ['firebaseUID', 'email'];
+        const updates = {};
+        
+        // Validate and collect updates
+        Object.keys(req.body).forEach(key => {
+            if (!protectedFields.includes(key)) {
+                updates[key] = req.body[key];
+            }
+        });
+
+        // Update user fields
+        Object.assign(user, updates);
+
+        // Validate required fields if they're being updated
+        if (updates.age && (isNaN(updates.age) || updates.age <= 0 || updates.age > 120)) {
+            return sendResponse(res, 400, false, null, 'Invalid age value');
+        }
+        if (updates.weight && (isNaN(updates.weight) || updates.weight <= 0)) {
+            return sendResponse(res, 400, false, null, 'Invalid weight value');
+        }
+        if (updates.height && (isNaN(updates.height) || updates.height <= 0)) {
+            return sendResponse(res, 400, false, null, 'Invalid height value');
+        }
+
+        await user.save();
+        sendResponse(res, 200, true, user, 'Profile updated successfully');
+    } catch (error) {
+        console.error('Profile update error:', error);
+        if (error.name === 'ValidationError') {
+            return sendResponse(res, 400, false, null, Object.values(error.errors).map(err => err.message).join(', '));
+        }
+        sendResponse(res, 500, false, null, 'Internal server error while updating profile');
+    }
 });

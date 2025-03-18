@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -6,13 +6,19 @@ import AppNavbar from "./home/AppNavbar";
 import Footer from "./home/Footer";
 import { getIdToken } from "../utils/auth";
 
+/**
+ * OnboardingForm component for collecting user fitness profile data
+ * This component is shown after registration to collect essential user information
+ */
 const OnboardingForm = () => {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [redirecting, setRedirecting] = useState(false);
 
+    // Initial form state with default values
     const [formData, setFormData] = useState({
         age: "",
         weight: "",
@@ -26,50 +32,132 @@ const OnboardingForm = () => {
         preferredWorkoutTimes: ""
     });
 
+    // Effect to handle navigation after successful form submission
+    useEffect(() => {
+        if (success && redirecting) {
+            const timer = setTimeout(() => {
+                console.log("Redirecting to dashboard...");
+                navigate("/dashboard", { replace: true });
+            }, 1500);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [success, redirecting, navigate]);
+
+    /**
+     * Handle form input changes
+     */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             [name]: value
-        });
+        }));
     };
 
+    /**
+     * Submit form data to update user profile
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setSuccess("");
+        setRedirecting(false);
         setLoading(true);
 
         try {
-            const token = await getIdToken();
-            if (!token) {
-                setError("Authentication token is missing. Please log in again.");
-                setLoading(false);
-                return;
+            // Validate required fields
+            if (!formData.age || !formData.weight || !formData.height) {
+                throw new Error("Age, weight, and height are required fields");
             }
 
-            const profileData = {
-                age: parseInt(formData.age) || 0,
-                weight: parseFloat(formData.weight) || 0,
-                weightUnit: formData.weightUnit,
-                height: parseFloat(formData.height) || 0,
-                heightUnit: formData.heightUnit,
-                fitnessLevel: formData.fitnessLevel,
-                fitnessGoal: formData.fitnessGoal,
-            };
+            // Get authentication token
+            const token = await getIdToken();
+            if (!token) {
+                throw new Error("Authentication token is missing. Please log in again.");
+            }
 
-            await axios.patch("http://localhost:8000/api/users/profile", profileData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            // Parse and validate numerical inputs
+            const profileData = validateAndParseFormData(formData);
+
+            // Send profile data to server
+            const response = await updateUserProfile(profileData, token);
+            console.log("Profile updated successfully:", response);
             
+            // Show success message and prepare for redirect
             setSuccess("Profile updated successfully!");
-            setTimeout(() => {
-                navigate("/dashboard");
-            }, 1500);
+            setRedirecting(true);
         } catch (err) {
-            setError("An error occurred while updating your profile. Please try again.");
+            console.error("Profile update error:", err);
+            setError(err.message || "An error occurred while updating your profile. Please try again.");
         } finally {
             setLoading(false);
         }
+    };
+
+    /**
+     * Validate form data and convert string values to appropriate types
+     */
+    const validateAndParseFormData = (data) => {
+        const age = parseInt(data.age);
+        const weight = parseFloat(data.weight);
+        const height = parseFloat(data.height);
+
+        if (isNaN(age) || age <= 0 || age > 120) {
+            throw new Error("Please enter a valid age (between 1 and 120)");
+        }
+        if (isNaN(weight) || weight <= 0) {
+            throw new Error("Please enter a valid weight");
+        }
+        if (isNaN(height) || height <= 0) {
+            throw new Error("Please enter a valid height");
+        }
+
+        return {
+            age,
+            weight,
+            weightUnit: data.weightUnit,
+            height,
+            heightUnit: data.heightUnit,
+            fitnessLevel: data.fitnessLevel,
+            fitnessGoal: data.fitnessGoal,
+            workoutPreferences: data.workoutPreferences || "",
+            dietaryRestrictions: data.dietaryRestrictions || "",
+            preferredWorkoutTimes: data.preferredWorkoutTimes || ""
+        };
+    };
+
+    /**
+     * Send profile data to the server API
+     */
+    const updateUserProfile = async (profileData, token) => {
+        try {
+            const response = await axios.patch(
+                "http://localhost:8080/api/users/profile",
+                profileData,
+                {
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (!response.data.success) {
+                console.error('Server response:', response.data);
+                throw new Error(response.data.message || "Failed to update profile");
+            }
+            
+            return response.data;
+        } catch (error) {
+            console.error('Profile update error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || error.message || "Failed to update profile");
+        }
+    };
+
+    // Manual navigation function as a backup
+    const goToDashboard = () => {
+        navigate("/dashboard", { replace: true });
     };
 
     return (
@@ -82,6 +170,7 @@ const OnboardingForm = () => {
                         Welcome to VivaFit! To create your personalized fitness experience, please provide a few details about yourself.
                     </p>
 
+                    {/* Alert messages */}
                     {error && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {error}
@@ -90,11 +179,22 @@ const OnboardingForm = () => {
 
                     {success && (
                         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            Profile updated successfully! Redirecting to your dashboard...
+                            {success} Redirecting to your dashboard...
+                            {redirecting && (
+                                <div className="mt-2">
+                                    <button 
+                                        onClick={goToDashboard}
+                                        className="text-green-700 underline hover:text-green-900"
+                                    >
+                                        Click here if not redirected automatically
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Basic Metrics Section */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-700 mb-3">Basic Metrics</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -135,6 +235,7 @@ const OnboardingForm = () => {
                             </div>
                         </div>
 
+                        {/* Fitness Profile Section */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-700 mb-3">Fitness Profile</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -161,6 +262,7 @@ const OnboardingForm = () => {
                             </div>
                         </div>
 
+                        {/* Preferences Section */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-700 mb-3">Your Preferences</h3>
                             <div className="space-y-4">
@@ -181,9 +283,10 @@ const OnboardingForm = () => {
                             </div>
                         </div>
 
+                        {/* Submit Button */}
                         <div className="pt-4">
-                            <button type="submit" disabled={loading} className={`w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-md transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
-                                {loading ? 'Saving...' : 'Complete Profile'}
+                            <button type="submit" disabled={loading || redirecting} className={`w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-md transition duration-300 ${(loading || redirecting) ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                                {loading ? 'Saving...' : (redirecting ? 'Redirecting...' : 'Complete Profile')}
                             </button>
                             <p className="text-sm text-gray-500 mt-2 text-center">
                                 Required fields <span className="text-red-500">*</span>

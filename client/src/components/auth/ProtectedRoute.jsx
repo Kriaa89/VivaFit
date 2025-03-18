@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children, requireOnboarding = false }) => {
 
       try {
         const token = await getIdToken();
-        const response = await fetch("http://localhost:8000/api/users/profile", {
+        const response = await fetch("http://localhost:8080/api/users/profile", {
           headers: {
             Authorization: `Bearer ${token}`
           }

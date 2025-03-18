@@ -18,30 +18,47 @@ function Login() {
     try {
       setError("");
       setLoading(true);
-      await login(email, password);
       
-      // Check if user has completed onboarding
-      const token = await getIdToken();
-      const response = await fetch("http://localhost:8000/api/users/profile", {
+      // Attempt to login
+      const user = await login(email, password);
+      if (!user) {
+        throw new Error("Invalid login credentials");
+      }
+
+      // Get authentication token
+      const token = await user.getIdToken(true);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      // Check onboarding status
+      const response = await fetch("http://localhost:8080/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       
-      if (response.ok) {
-        const profile = await response.json();
-        // If user has completed onboarding (has profile data), go to dashboard
-        if (profile.age && profile.weight && profile.height) {
-          navigate("/dashboard");
-        } else {
-          // If not completed onboarding, redirect to onboarding
-          navigate("/onboarding");
-        }
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const profile = await response.json();
+      
+      // Navigate based on onboarding status
+      if (profile.success && profile.data && profile.data.age && profile.data.weight && profile.data.height) {
+        navigate("/dashboard");
       } else {
         navigate("/onboarding");
       }
     } catch (err) {
-      setError("Failed to sign in. Check your credentials.");
+      console.error("Login error:", err);
+      if (err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+        setError("Invalid email or password");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many login attempts. Please try again later");
+      } else {
+        setError(err.message || "Failed to sign in. Please try again");
+      }
     } finally {
       setLoading(false);
     }
@@ -60,7 +77,26 @@ function Login() {
       }
       
       await createUserProfileFromGoogle(firstName, lastName, email, token);
-      navigate("/dashboard");
+      
+      // Check onboarding status before navigation
+      const response = await fetch("http://localhost:8080/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const profile = await response.json();
+      
+      // Navigate based on onboarding status
+      if (profile.success && profile.data && profile.data.age && profile.data.weight && profile.data.height) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
     } catch (err) {
       setError(err.message || "Failed to sign in with Google");
     } finally {
@@ -70,7 +106,7 @@ function Login() {
 
   async function createUserProfileFromGoogle(firstName, lastName, email, token) {
     try {
-      const response = await fetch("http://localhost:8000/api/users", {
+      const response = await fetch("http://localhost:8080/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

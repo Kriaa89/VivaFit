@@ -52,35 +52,61 @@ const UserSchema = new Schema({
     age: {
         type: Number,
         min: [13, "Must be at least 13 years old"],
-        max: [120, "Age must not exceed 120"]
+        max: [120, "Age must not exceed 120"],
+        required: [true, "Age is required"]
     },
     weight: {
         type: Number,
-        min: [20, "Weight must be at least 20"]
+        min: [20, "Weight must be at least 20"],
+        required: [true, "Weight is required"]
     },
     weightUnit: {
         type: String,
-        enum: ["kg", "lb"],
+        enum: {
+            values: ["kg", "lb"],
+            message: "Weight unit must be either kg or lb"
+        },
         default: "kg"
     },
     height: {
         type: Number,
-        min: [50, "Height must be at least 50"]
+        required: [true, "Height is required"]
     },
     heightUnit: {
         type: String,
-        enum: ["cm", "in"],
+        enum: {
+            values: ["cm", "m", "ft", "in"],
+            message: "Height unit must be one of: cm, m, ft, in"
+        },
         default: "cm"
     },
     fitnessLevel: {
         type: String,
-        enum: ["beginner", "intermediate", "advanced"],
+        enum: {
+            values: ["beginner", "intermediate", "advanced"],
+            message: "Fitness level must be beginner, intermediate, or advanced"
+        },
         default: "beginner"
     },
     fitnessGoal: {
         type: String,
-        enum: ["weight loss", "muscle gain", "endurance", "strength", "flexibility", "overall fitness"],
-        default: "overall fitness"
+        enum: {
+            values: ["weight loss", "muscle gain", "endurance", "strength", "flexibility", "general fitness"],
+            message: "Invalid fitness goal selected"
+        },
+        default: "general fitness"
+    },
+    workoutPreferences: {
+        type: String,
+        trim: true
+    },
+    dietaryRestrictions: {
+        type: String,
+        trim: true
+    },
+    preferredWorkoutTimes: {
+        type: String,
+        trim: true
     }
 }, { timestamps: true });
 
