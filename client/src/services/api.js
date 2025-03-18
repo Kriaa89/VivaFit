@@ -27,7 +27,13 @@ export function useApi() {
   };
 
   return {
+    // User related endpoints
     getUserProfile: () => makeRequest('get', '/users/profile'),
-    updateUserProfile: (data) => makeRequest('patch', '/users/profile', data)
+    updateUserProfile: (data) => makeRequest('patch', '/users/profile', data),
+
+    // Recommendation related endpoints
+    getRecommendations: (criteria) => makeRequest('post', '/recommendations', criteria),
+    getRecommendationHistory: () => makeRequest('get', '/recommendations/history'),
+    deleteRecommendation: (recommendationId) => makeRequest('delete', `/recommendations/${recommendationId}`)
   };
 }

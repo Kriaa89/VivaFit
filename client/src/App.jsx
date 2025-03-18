@@ -8,6 +8,9 @@ import OnboardingForm from './components/OnboardingForm';
 import Dashboard from './components/dashboard/Dashboard';
 import Home from './components/home/Home';
 import AboutUs from './components/home/AboutUs';
+import WorkoutPlanner from './components/exercise/WorkoutPlanner';
+import ExerciseBrowser from './components/exercise/ExerciseBrowser';
+import ExerciseList from './components/exercise/ExerciseList'; // Import the new component
 
 // Import a placeholder component for routes that are not yet implemented
 const PlaceholderPage = ({ pageName }) => (
@@ -40,11 +43,22 @@ function App() {
             <Route path="/programs" element={<PlaceholderPage pageName="Programs" />} />
             <Route path="/pricing" element={<PlaceholderPage pageName="Pricing" />} />
 
+            {/* Exercise Features */}
+            <Route path="/exercises" element={<ExerciseBrowser />} />
+            <Route path="/exercise-list" element={<ExerciseList />} /> {/* Add the new route */}
+
             {/* Protected Routes */}
             <Route path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/workout-planner"
+              element={
+                <ProtectedRoute>
+                  <WorkoutPlanner />
                 </ProtectedRoute>
               }
             />
