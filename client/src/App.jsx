@@ -8,6 +8,7 @@ import OnboardingForm from './components/OnboardingForm';
 import Home from './components/home/Home';
 import AboutUs from './components/home/AboutUs';
 import Dashboard from './components/dashboard/Dashboard';
+import Profile from './components/dashboard/Profile';
 import ExercisesList from './components/exercise/ExercisesList';
 
 function App() {
@@ -35,6 +36,13 @@ function App() {
               element={
                 <ProtectedRoute requireOnboarding={true}>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/profile"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
