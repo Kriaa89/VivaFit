@@ -89,7 +89,7 @@ function Login() {
    */
   async function checkProfileAndNavigate(token) {
     try {
-      const response = await fetch("http://localhost:8080/api/users/profile", {
+      const response = await fetch("http://localhost:8000/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -110,7 +110,7 @@ function Login() {
     } catch (error) {
       console.error("Profile check error:", error);
       // Default to onboarding if profile check fails
-      navigate("/onboarding");
+      navigate("/dashboard");
     }
   }
 
@@ -119,7 +119,7 @@ function Login() {
    */
   async function createUserProfileFromGoogle(firstName, lastName, email, token) {
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("http://localhost:8000/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

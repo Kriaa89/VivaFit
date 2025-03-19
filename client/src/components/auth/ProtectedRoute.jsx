@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getIdToken } from '../../utils/auth';
 
@@ -14,6 +14,7 @@ import { getIdToken } from '../../utils/auth';
  */
 const ProtectedRoute = ({ children, requireOnboarding = false }) => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
@@ -29,7 +30,7 @@ const ProtectedRoute = ({ children, requireOnboarding = false }) => {
       if (requireOnboarding) {
         try {
           const token = await getIdToken();
-          const response = await fetch("http://localhost:8080/api/users/profile", {
+          const response = await fetch("http://localhost:8000/api/users/profile", {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -38,12 +39,13 @@ const ProtectedRoute = ({ children, requireOnboarding = false }) => {
           if (response.ok) {
             const profile = await response.json();
             // Check if essential profile fields exist
-            const isOnboardingComplete = profile && profile.age && profile.weight && profile.height;
+            const isOnboardingComplete = profile && profile.data && 
+              profile.data.age && profile.data.weight && profile.data.height;
             setHasCompletedOnboarding(isOnboardingComplete);
 
             // Special case: If we're on the onboarding page but user is already onboarded
             if (requireOnboarding === "check" && isOnboardingComplete) {
-              window.location.href = "/dashboard";
+              navigate("/dashboard");
               return;
             }
           } else {
@@ -58,7 +60,7 @@ const ProtectedRoute = ({ children, requireOnboarding = false }) => {
     }
 
     checkOnboarding();
-  }, [currentUser, requireOnboarding]);
+  }, [currentUser, requireOnboarding, navigate]);
 
   // Show loading state
   if (loading) {

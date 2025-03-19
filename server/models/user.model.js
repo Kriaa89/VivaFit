@@ -31,6 +31,12 @@ const UserSchema = new Schema({
             message: "Please enter a valid email address"
         }
     },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        minlength: [6, "Password must be at least 6 characters"],
+        maxlength: [100, "Password cannot exceed 100 characters"]
+    },
     age: {
         type: Number,
         min: [13, "Must be at least 13 years old"],

@@ -7,6 +7,8 @@ import Login from './components/auth/Login';
 import OnboardingForm from './components/OnboardingForm';
 import Home from './components/home/Home';
 import AboutUs from './components/home/AboutUs';
+import Dashboard from './components/dashboard/Dashboard';
+import ExercisesList from './components/exercise/ExercisesList';
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/exercises" element={<ExercisesList />} />
             
             {/* Protected Routes */}
             <Route path="/onboarding"

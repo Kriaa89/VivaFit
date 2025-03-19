@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnect from "./config/mongoose.config.js";
 import userRoutes from "./routes/user.routes.js";
+import programRoutes from "./routes/program.routes.js"; 
 import { errorHandler } from "./middleware/error.middleware.js";
 
 // Load environment variables
@@ -21,6 +22,16 @@ app.get("/api/health", (_, res) => {
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/programs", programRoutes);
+
+app.get('/api/dashboard', (req, res) => {
+  // Replace with actual data fetching logic
+  const dashboardData = {
+    message: 'This is the dashboard data from the server.',
+    // Add more data as needed
+  };
+  res.json(dashboardData);
+});
 
 // Error handling
 app.use((req, res) => {
