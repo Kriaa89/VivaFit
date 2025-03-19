@@ -13,6 +13,7 @@ const Profile = () => {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [uploading, setUploading] = useState(false);
     
     // Profile form state
     const [formData, setFormData] = useState({
@@ -28,7 +29,8 @@ const Profile = () => {
         fitnessGoal: "general fitness",
         workoutPreferences: "",
         dietaryRestrictions: "",
-        preferredWorkoutTimes: ""
+        preferredWorkoutTimes: "",
+        profilePhoto: ""
     });
 
     // Load user profile data
@@ -69,7 +71,8 @@ const Profile = () => {
                         fitnessGoal: profileData.data.fitnessGoal || "general fitness",
                         workoutPreferences: profileData.data.workoutPreferences || "",
                         dietaryRestrictions: profileData.data.dietaryRestrictions || "",
-                        preferredWorkoutTimes: profileData.data.preferredWorkoutTimes || ""
+                        preferredWorkoutTimes: profileData.data.preferredWorkoutTimes || "",
+                        profilePhoto: profileData.data.profilePhoto || ""
                     });
                 } else {
                     throw new Error(profileData.message || "Failed to load profile data");
@@ -156,15 +159,79 @@ const Profile = () => {
         navigate("/dashboard");
     };
 
+    // Handle photo upload
+    const handlePhotoUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const formData = new FormData();
+            formData.append('profilePhoto', file);
+
+            const token = await getIdToken();
+            const response = await fetch('http://localhost:8000/api/users/upload-photo', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to upload photo');
+            
+            const result = await response.json();
+            setFormData(prev => ({ ...prev, profilePhoto: result.photoUrl }));
+            setSuccessMessage("Profile photo updated successfully!");
+        } catch (err) {
+            setError('Failed to upload photo');
+            console.error('Photo upload error:', err);
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-gray-100">
             <DashboardNavbar />
             <main className="flex-grow pt-16">
-                
-                
                 <div className="max-w-4xl mx-auto px-4 py-8">
                     <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Your Profile</h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Edit Your Profile</h2>
+                            <div className="relative">
+                                {formData.profilePhoto ? (
+                                    <img 
+                                        src={formData.profilePhoto} 
+                                        alt="Profile"
+                                        className="h-24 w-24 rounded-full object-cover border-2 border-green-500"
+                                    />
+                                ) : (
+                                    <div className="h-24 w-24 bg-green-100 rounded-full flex items-center justify-center">
+                                        <span className="text-2xl font-bold text-green-500">
+                                            {formData.firstName?.charAt(0)}{formData.lastName?.charAt(0)}
+                                        </span>
+                                    </div>
+                                )}
+                                <label className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2 cursor-pointer hover:bg-green-600 transition-colors">
+                                    <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept="image/*"
+                                        onChange={handlePhotoUpload}
+                                        disabled={uploading}
+                                    />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </label>
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         
                         {/* Loading indicator */}
                         {loading && (

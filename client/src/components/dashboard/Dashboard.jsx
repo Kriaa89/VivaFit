@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
-import AppNavbar from '../home/AppNavbar';
 import Footer from '../home/Footer';
 import DashboardNavbar from './DashboardNavbar';
 import { getIdToken } from '../../utils/auth';
@@ -11,6 +10,37 @@ function Dashboard() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  // Add photo upload handler
+  const handlePhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('profilePhoto', file);
+
+      const token = await getIdToken();
+      const response = await fetch('http://localhost:8000/api/users/upload-photo', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('Failed to upload photo');
+      
+      const result = await response.json();
+      setUserProfile(prev => ({ ...prev, profilePhoto: result.photoUrl }));
+    } catch (err) {
+      setError('Failed to upload photo');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Fetch user profile data
   useEffect(() => {
@@ -115,8 +145,6 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <AppNavbar />
-
       <main className="flex-grow pt-16">
         <DashboardNavbar />
         
@@ -136,10 +164,34 @@ function Dashboard() {
                 <div className="bg-gradient-to-r from-green-400 to-blue-500 p-6">
                   <div className="flex justify-center">
                     <div className="relative">
-                      {/* Use a default profile avatar */}
-                      <div className="h-32 w-32 bg-white rounded-full flex items-center justify-center text-4xl font-bold text-green-500 border-4 border-white shadow-lg">
-                        {userProfile.firstName.charAt(0)}{userProfile.lastName.charAt(0)}
-                      </div>
+                      {userProfile.profilePhoto ? (
+                        <img 
+                          src={userProfile.profilePhoto} 
+                          alt="Profile"
+                          className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg"
+                        />
+                      ) : (
+                        <div className="h-32 w-32 bg-white rounded-full flex items-center justify-center text-4xl font-bold text-green-500 border-4 border-white shadow-lg">
+                          {userProfile.firstName.charAt(0)}{userProfile.lastName.charAt(0)}
+                        </div>
+                      )}
+                      <label className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2 cursor-pointer hover:bg-green-600 transition-colors">
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          disabled={uploading}
+                        />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                      </label>
+                      {uploading && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -81,3 +81,26 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
         throw error;
     }
 });
+
+// Upload profile photo
+export const uploadProfilePhoto = asyncHandler(async (req, res) => {
+    try {
+        if (!req.file) {
+            return sendResponse(res, 400, false, null, 'No file uploaded');
+        }
+
+        const user = req.dbUser;
+        
+        // Create the photo URL
+        const photoUrl = `/uploads/${req.file.filename}`;
+        
+        // Update user profile with photo URL
+        user.profilePhoto = photoUrl;
+        await user.save();
+
+        sendResponse(res, 200, true, { photoUrl }, 'Profile photo uploaded successfully');
+    } catch (error) {
+        console.error('Photo upload error:', error);
+        sendResponse(res, 500, false, null, 'Failed to upload profile photo');
+    }
+});

@@ -1,6 +1,10 @@
 import {model, Schema} from 'mongoose';
 
 const UserSchema = new Schema({
+    profilePhoto: {
+        type: String,
+        trim: true
+    },
     firebaseUID: {
         type: String,
         required: true,
