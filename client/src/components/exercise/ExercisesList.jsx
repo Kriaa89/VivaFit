@@ -340,15 +340,16 @@ const ExercisesList = () => {
                         </div>
                         
                         <div className="mb-6">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4">
-                                <label htmlFor="daySelect" className="block text-sm font-medium text-gray-700 mr-2 mb-2 sm:mb-0">
+                            {/* Updated Select Day Container */}
+                            <div className="flex items-center gap-4 mb-4">
+                                <label htmlFor="daySelect" className="text-sm font-medium text-gray-700">
                                     Select Day:
                                 </label>
                                 <select
                                     id="daySelect"
                                     value={selectedDay}
                                     onChange={(e) => setSelectedDay(e.target.value)}
-                                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 mr-0 sm:mr-4 mb-2 sm:mb-0 w-full sm:w-auto"
+                                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto"
                                 >
                                     {Object.keys(weeklyProgram).map(day => (
                                         <option key={day} value={day}>{day}</option>
@@ -367,7 +368,7 @@ const ExercisesList = () => {
                                 {Object.keys(selectedExercises).length} exercise(s) selected
                             </div>
 
-                            {/* Weekly Schedule Display */}
+                            {/* Updated Weekly Schedule Display for each exercise */}
                             <div className="border border-gray-200 rounded-md overflow-x-auto">
                                 <div className="grid grid-cols-1 md:grid-cols-7 gap-2 p-4 min-w-full">
                                     {Object.entries(weeklyProgram).map(([day, dayExercises]) => (
@@ -388,40 +389,40 @@ const ExercisesList = () => {
                                                                     ×
                                                                 </button>
                                                             </div>
-                                                            <div className="flex flex-wrap text-gray-600 gap-2 mt-1">
-                                                                <div>
-                                                                    <label className="mr-1">Sets:</label>
+                                                            <div className="flex flex-col sm:flex-row text-gray-600 gap-4 mt-2">
+                                                                <div className="flex items-center">
+                                                                    <label className="mr-2">Sets:</label>
                                                                     <input
                                                                         type="number"
                                                                         min="1"
                                                                         max="20"
                                                                         value={ex.sets}
                                                                         onChange={(e) => updateExerciseInDay(day, ex.exerciseId, 'sets', parseInt(e.target.value) || 1)}
-                                                                        className="w-12 border border-gray-300 rounded px-1"
+                                                                        className="w-16 border border-gray-300 rounded px-2 py-1"
                                                                     />
                                                                 </div>
-                                                                <div>
-                                                                    <label className="mr-1">Reps:</label>
+                                                                <div className="flex items-center">
+                                                                    <label className="mr-2">Reps:</label>
                                                                     <input
                                                                         type="number"
                                                                         min="1"
                                                                         max="100"
                                                                         value={ex.reps}
                                                                         onChange={(e) => updateExerciseInDay(day, ex.exerciseId, 'reps', parseInt(e.target.value) || 1)}
-                                                                        className="w-12 border border-gray-300 rounded px-1"
+                                                                        className="w-16 border border-gray-300 rounded px-2 py-1"
                                                                     />
                                                                 </div>
-                                                                <div>
-                                                                    <label className="mr-1">Rest:</label>
+                                                                <div className="flex items-center">
+                                                                    <label className="mr-2">Rest:</label>
                                                                     <input
                                                                         type="number"
                                                                         min="0"
                                                                         max="300"
                                                                         value={ex.restTime}
                                                                         onChange={(e) => updateExerciseInDay(day, ex.exerciseId, 'restTime', parseInt(e.target.value) || 0)}
-                                                                        className="w-12 border border-gray-300 rounded px-1"
+                                                                        className="w-16 border border-gray-300 rounded px-2 py-1"
                                                                     />
-                                                                    <span className="text-xs">sec</span>
+                                                                    <span className="ml-1 text-xs">sec</span>
                                                                 </div>
                                                             </div>
                                                         </li>
