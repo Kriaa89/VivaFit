@@ -321,7 +321,7 @@ const ExercisesList = () => {
 
                 {/* Program Builder */}
                 {showProgramBuilder && (
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div className="bg-gray-50 border border-gray-300 rounded-lg shadow-md p-8 mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Weekly Program Builder</h2>
                         
                         <div className="mb-4">
