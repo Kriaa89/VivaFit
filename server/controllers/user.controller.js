@@ -94,9 +94,18 @@ export const uploadProfilePhoto = asyncHandler(async (req, res) => {
         // Create the photo URL
         const photoUrl = `/uploads/${req.file.filename}`;
         
-        // Update user profile with photo URL
-        user.profilePhoto = photoUrl;
-        await user.save();
+        // Update only the profilePhoto field using findByIdAndUpdate to bypass validation
+        // Use { new: true } to return the updated document
+        // Use { runValidators: false } to skip validation
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            { profilePhoto: photoUrl },
+            { new: true, runValidators: false }
+        );
+
+        if (!updatedUser) {
+            return sendResponse(res, 404, false, null, 'User not found');
+        }
 
         sendResponse(res, 200, true, { photoUrl }, 'Profile photo uploaded successfully');
     } catch (error) {

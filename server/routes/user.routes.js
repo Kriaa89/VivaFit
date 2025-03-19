@@ -1,45 +1,65 @@
 import express from 'express';
 import multer from 'multer';
+import path from 'path';
 import { createUserProfile, getUserProfile, updateUserProfile, uploadProfilePhoto } from '../controllers/user.controller.js';
 import { verifyToken, checkUserExists } from '../middleware/auth.middleware.js';
+import { fileURLToPath } from 'url';
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        const uploadPath = path.join(__dirname, '..', 'uploads');
+        cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
+        // Create unique filename with original extension
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-const upload = multer({ 
+const fileFilter = (req, file, cb) => {
+    // Accept images only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+const upload = multer({
     storage: storage,
     limits: {
         fileSize: 5 * 1024 * 1024 // 5MB limit
     },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed'));
-        }
-    }
+    fileFilter: fileFilter
 });
 
-// Create user profile - only requires token verification
+// Routes
 router.post('/', verifyToken, createUserProfile);
-
-// Get user profile - requires token and user to exist in database
 router.get('/profile', verifyToken, checkUserExists, getUserProfile);
-
-// Update user profile - requires token and user to exist
 router.patch('/profile', verifyToken, checkUserExists, updateUserProfile);
 
-// Upload profile photo
-router.post('/upload-photo', verifyToken, checkUserExists, upload.single('profilePhoto'), uploadProfilePhoto);
+// Upload profile photo with error handling
+router.post('/upload-photo', verifyToken, checkUserExists, (req, res, next) => {
+    upload.single('profilePhoto')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'File upload error', 
+                error: err.message 
+            });
+        } else if (err) {
+            return res.status(400).json({ 
+                success: false, 
+                message: err.message 
+            });
+        }
+        next();
+    });
+}, uploadProfilePhoto);
 
 export default router;
