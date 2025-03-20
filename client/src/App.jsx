@@ -11,6 +11,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import Profile from './components/dashboard/Profile';
 import ExercisesList from './components/exercise/ExercisesList';
 import WorkoutPlayer from './components/exercise/WorkoutPlayer';
+import WorkoutTracker from './components/workout/WorkoutTracker';
 
 function App() {
   return (
@@ -51,6 +52,13 @@ function App() {
               element={
                 <ProtectedRoute requireOnboarding={true}>
                   <WorkoutPlayer />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/track-workout"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <WorkoutTracker />
                 </ProtectedRoute>
               }
             />

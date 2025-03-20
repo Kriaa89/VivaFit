@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@turf/turf": "^7.2.0",
     "axios": "^1.8.3",
     "bootstrap": "^5.3.3",
     "firebase": "^11.4.0",
+    "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.3.0",
     "react-toastify": "^11.0.5"
   },
