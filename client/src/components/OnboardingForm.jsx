@@ -54,25 +54,34 @@ const OnboardingForm = () => {
             if (!token) {
                 throw new Error("Authentication token is missing. Please log in again.");
             }
-    
+
+            console.log("Sending profile data:", profileData);
+            
             // Submit profile data
-            const response = await axios.patch(
-                "http://localhost:8000/api/users/profile",
-                profileData,
-                {
-                    headers: { 
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+            try {
+                const response = await axios.patch(
+                    "http://localhost:8000/api/users/profile",
+                    profileData,
+                    {
+                        headers: { 
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
                     }
+                );
+                
+                console.log("Profile update response:", response.data);
+    
+                if (!response.data.success) {
+                    throw new Error(response.data.message || "Failed to update profile");
                 }
-            );
     
-            if (!response.data.success) {
-                throw new Error(response.data.message || "Failed to update profile");
+                // Navigate immediately to dashboard without delay
+                navigate("/dashboard");
+            } catch (axiosError) {
+                console.error("API Error details:", axiosError.response?.data || axiosError.message);
+                throw new Error(axiosError.response?.data?.message || "Failed to communicate with server");
             }
-    
-            // Navigate immediately to dashboard without delay
-            navigate("/dashboard");
             
         } catch (err) {
             setError(err.message || "An error occurred. Please try again.");

@@ -47,12 +47,12 @@ const UserSchema = new Schema({
         type: Number,
         min: [13, "Must be at least 13 years old"],
         max: [120, "Age must not exceed 120"],
-        required: [true, "Age is required"]
+        required: [false, "Age is required"]
     },
     weight: {
         type: Number,
         min: [20, "Weight must be at least 20"],
-        required: [true, "Weight is required"]
+        required: [false, "Weight is required"]
     },
     weightUnit: {
         type: String,
@@ -64,7 +64,7 @@ const UserSchema = new Schema({
     },
     height: {
         type: Number,
-        required: [true, "Height is required"]
+        required: [false, "Height is required"]
     },
     heightUnit: {
         type: String,

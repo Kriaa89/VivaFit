@@ -75,6 +75,19 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 // Update user profile
+/**
+ * Updates the user profile with the provided data.
+ * 
+ * @function updateUserProfile
+ * @async
+ * @param {Object} req - The request object.
+ * @param {Object} req.dbUser - The user object from the database.
+ * @param {Object} req.body - The request body containing the fields to update.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - Sends a response with the status of the update operation.
+ * 
+ * @throws {Error} - Throws an error if the update operation fails.
+ */
 export const updateUserProfile = asyncHandler(async (req, res) => {
     try {
         const user = req.dbUser;
@@ -92,28 +105,34 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
             }
         });
 
-        // Update user fields
-        Object.assign(user, updates);
+        // Update user fields - safely handle validation
+        try {
+            // Update user fields
+            Object.assign(user, updates);
 
-        // Validate required fields if they're being updated
-        if (updates.age && (isNaN(updates.age) || updates.age <= 0 || updates.age > 120)) {
-            return sendResponse(res, 400, false, null, 'Invalid age value');
-        }
-        if (updates.weight && (isNaN(updates.weight) || updates.weight <= 0)) {
-            return sendResponse(res, 400, false, null, 'Invalid weight value');
-        }
-        if (updates.height && (isNaN(updates.height) || updates.height <= 0)) {
-            return sendResponse(res, 400, false, null, 'Invalid height value');
-        }
+            // Perform specific validations
+            if (updates.age && (isNaN(updates.age) || updates.age <= 0 || updates.age > 120)) {
+                return sendResponse(res, 400, false, null, 'Invalid age value');
+            }
+            if (updates.weight && (isNaN(updates.weight) || updates.weight <= 0)) {
+                return sendResponse(res, 400, false, null, 'Invalid weight value');
+            }
+            if (updates.height && (isNaN(updates.height) || updates.height <= 0)) {
+                return sendResponse(res, 400, false, null, 'Invalid height value');
+            }
 
-        await user.save();
-        const updatedUser = await User.findById(user._id).select('-password').lean();
-        return sendResponse(res, 200, true, updatedUser, 'Profile updated successfully');
+            await user.save();
+            const updatedUser = await User.findById(user._id).select('-password').lean();
+            return sendResponse(res, 200, true, updatedUser, 'Profile updated successfully');
+        } catch (validationError) {
+            console.error('Validation error:', validationError);
+            if (validationError.name === 'ValidationError') {
+                return sendResponse(res, 400, false, null, Object.values(validationError.errors).map(err => err.message).join(', '));
+            }
+            throw validationError; // Re-throw if it's not a validation error
+        }
     } catch (error) {
         console.error('Update profile error:', error);
-        if (error.name === 'ValidationError') {
-            return sendResponse(res, 400, false, null, Object.values(error.errors).map(err => err.message).join(', '));
-        }
         return sendResponse(res, 500, false, null, error.message || 'Error updating profile');
     }
 });
