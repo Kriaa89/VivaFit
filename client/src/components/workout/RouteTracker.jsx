@@ -33,6 +33,7 @@ export default function RouteTracker() {
   const watchIdRef = useRef(null);
   const startTimeRef = useRef(null);
   const timerIdRef = useRef(null);
+  const elapsedTimeRef = useRef(0);
 
   // Start tracking user location
   const startTracking = () => {
@@ -49,6 +50,7 @@ export default function RouteTracker() {
     timerIdRef.current = setInterval(() => {
       const seconds = Math.floor((new Date() - startTimeRef.current) / 1000);
       setElapsedTime(seconds);
+      elapsedTimeRef.current = seconds;
     }, 1000);
     
     // Use Geolocation API to watch position
@@ -84,8 +86,8 @@ export default function RouteTracker() {
                   const newTotalDistance = prevDistance + segmentDistance;
                   
                   // Calculate current speed in km/h
-                  if (elapsedTime > 0) {
-                    const speedKmh = (newTotalDistance / (elapsedTime / 3600)).toFixed(2);
+                  if (elapsedTimeRef.current > 0) {
+                    const speedKmh = (newTotalDistance / (elapsedTimeRef.current / 3600)).toFixed(2);
                     setSpeed(speedKmh);
                   }
                   
@@ -192,7 +194,7 @@ export default function RouteTracker() {
 
           {/* Speed Card */}
           <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
-            <div className="flex items-center justify-between mb-4"></div>
+            <div className="flex items-center justify-between mb-4">
               <div className="bg-white/20 rounded-lg p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -223,7 +225,7 @@ export default function RouteTracker() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1v-4z" />
               </svg>
               Stop Tracking
             </button>
@@ -259,7 +261,7 @@ export default function RouteTracker() {
               <SetViewOnLocation coords={getMapCoordinates()} />
             </MapContainer>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center bg-gray-50 p-8 text-center"></div>
+            <div className="h-full flex flex-col items-center justify-center bg-gray-50 p-8 text-center">
               <div className="bg-blue-100 p-4 rounded-full mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
