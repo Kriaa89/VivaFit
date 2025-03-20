@@ -8,6 +8,23 @@
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 
+## Table of Contents
+1. [Project Overview](#-project-overview)
+2. [Core Features](#-core-features)
+   1. [User Authentication & Profile Management](#-1-user-authentication--profile-management)
+   2. [Exercise Library](#-2-exercise-library)
+   3. [Workout Program Builder](#-3-workout-program-builder)
+   4. [Interactive Workout Player](#-4-interactive-workout-player)
+   5. [Dashboard & Progress Tracking](#-5-dashboard--progress-tracking)
+   6. [GPS Route Tracking](#-6-gps-route-tracking)
+3. [Technical Stack](#-technical-stack)
+4. [Getting Started](#-getting-started)
+5. [Future Enhancements](#-future-enhancements)
+6. [Contributors](#-contributors)
+7. [License](#-license)
+
+---
+
 ## 📝 Project Overview
 VivaFit is a modern fitness application designed to empower users of all fitness levels to create and manage their personalized workout programs. Built with the MERN stack (MongoDB, Express.js, React, Node.js) and leveraging Firebase Authentication, it provides a seamless experience for fitness enthusiasts to track their progress, explore exercises, and build customized workout routines that adapt to their unique needs and goals.
 
@@ -206,3 +223,28 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
 Made with ❤️ by the VivaFit Team | © 2023 VivaFit
 </div>
+
+## Context
+VivaFit was created to address the need for a comprehensive fitness application that offers personalized workout plans, real-time progress tracking, and smart insights. The goal is to make fitness accessible, engaging, and effective for everyone, regardless of their starting point or ultimate fitness aspirations.
+
+## Problems
+- Lack of personalized workout experiences in existing fitness apps
+- Difficulty in tracking progress and staying motivated
+- Limited access to a diverse range of exercises and workout plans
+- Inadequate tools for creating and managing custom workout programs
+
+## Solution
+VivaFit provides a seamless experience for fitness enthusiasts to track their progress, explore exercises, and build customized workout routines that adapt to their unique needs and goals. The application offers personalized workout plans, real-time progress tracking, and smart insights to help users stay motivated and achieve their fitness goals.
+
+## Tools & Technologies
+- **Frontend:** React, Vite, Tailwind CSS, React Router, Axios, Firebase
+- **Backend:** Node.js, Express, MongoDB, Mongoose, JWT, Firebase Admin SDK
+- **Other:** ExerciseDB API, Cloud storage for profile pictures
+
+## Challenges
+- Ensuring seamless integration between frontend and backend components
+- Implementing secure authentication and authorization mechanisms
+- Providing a responsive and intuitive user interface
+- Managing and displaying real-time data for progress tracking
+- Handling large datasets for exercises and workout plans
+- Ensuring scalability and performance of the application
