@@ -49,7 +49,7 @@ The VivaFit Authentication System is a comprehensive solution integrating both f
 The system is structured as a microservice comprising:
 
 - **Auth Server:** Core service (Node.js/Express) exposing authentication APIs.
-- **Database:** Stores user profiles, hashed passwords, and token data (e.g., PostgreSQL, MongoDB).
+- **Database:** Stores user profiles, hashed passwords, and token data (e.g., MongoDB).
 - **Client Applications:** VivaFit web and mobile clients that interact with the Auth Server.
 - **External Services:** Email/SMS services for verification and password reset.
 
@@ -205,3 +205,82 @@ We have extended the documentation to include clear explanations of the recent c
 ---
 
 This MVC-based architecture offers clarity in design, a clear separation of concerns, high maintainability, and scalability required to support the comprehensive features of VivaFit.
+
+## Usage
+
+### Register a New User
+To register a new user, send a POST request to `/auth/register` with the following fields:
+- `firstName`: User's first name
+- `lastName`: User's last name
+- `email`: User's email address
+- `password`: User's password
+
+### User Login
+To log in, send a POST request to `/auth/login` with the following fields:
+- `email`: User's email address
+- `password`: User's password
+
+### Access Protected Endpoint
+To access a protected endpoint, include the JWT token in the `Authorization` header as `Bearer <token>`.
+
+### Refresh Token
+To refresh the token, send a POST request to `/auth/refresh` with the refresh token.
+
+### Password Reset
+To reset the password, send a POST request to `/auth/reset-password` with the user's email address.
+
+---
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register`: Register a new user
+- `POST /auth/login`: Log in a user
+- `POST /auth/refresh`: Refresh the JWT token
+- `POST /auth/reset-password`: Reset the user's password
+
+### User Profile
+- `GET /user/profile`: Get the user's profile
+- `PUT /user/profile`: Update the user's profile
+- `POST /user/profile/photo`: Upload a profile photo
+
+---
+
+## Workflows
+
+### User Registration
+1. User submits registration form.
+2. Server validates input and creates a new user record.
+3. Server sends a confirmation email (if email verification is enabled).
+4. User clicks the confirmation link to verify their email.
+
+### User Login
+1. User submits login form.
+2. Server validates credentials and issues a JWT token.
+3. User uses the token to access protected resources.
+
+### Password Reset
+1. User submits password reset request.
+2. Server sends a password reset email.
+3. User clicks the reset link and sets a new password.
+
+---
+
+## Testing
+
+To run tests, use the following command:
+```
+npm test
+```
+
+---
+
+## Contributing
+
+We welcome contributions! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
