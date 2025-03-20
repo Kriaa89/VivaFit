@@ -50,7 +50,20 @@ Our mission is to make fitness accessible, engaging, and effective for everyone,
 - 💾 Save and manage multiple programs for different goals
 - 📊 View saved programs with detailed breakdowns of exercises per day
 
-### ⏱️ 4. Interactive Workout Player
+### 🗺️ 4. GPS Route Tracking
+- Track outdoor workouts with real-time GPS mapping
+- Features include:
+  - 📍 Real-time location tracking using browser geolocation
+  - 🗺️ Interactive map visualization of your route
+  - 📏 Accurate distance calculation in kilometers
+  - ⏱️ Workout duration tracking
+  - 🚀 Current speed monitoring
+  - 📊 Clean, intuitive dashboard with workout metrics
+  - 📱 Mobile-friendly design for on-the-go tracking
+- See your progress unfold in real-time on an interactive map
+- [Learn more about the GPS Route Tracker](./workout-tracker-guide.md)
+
+### ⏱️ 5. Interactive Workout Player
 - Start and follow through your saved workout programs with an intuitive interface
 - Features include:
   - ▶️ Exercise-by-exercise guided navigation
@@ -62,7 +75,7 @@ Our mission is to make fitness accessible, engaging, and effective for everyone,
   - 📋 Exercise details including sets, reps, and rest time
 - Complete workout sessions at your own pace with guidance at every step
 
-### 📈 5. Dashboard & Progress Tracking
+### 📈 6. Dashboard & Progress Tracking
 - Personalized dashboard with overview of fitness profile
 - BMI calculation and category indication with health insights
 - Track weight changes and body metrics over time
@@ -78,6 +91,8 @@ Our mission is to make fitness accessible, engaging, and effective for everyone,
 - 🔥 Firebase Authentication for secure user management
 - 🌐 Axios for efficient API requests and data handling
 - 📱 Responsive design principles for all device sizes
+- 🗺️ React Leaflet for interactive maps and GPS tracking
+- 📐 Turf.js for geospatial calculations
 
 ### ⚙️ Backend
 - 🟢 Node.js with Express for efficient API development
@@ -162,6 +177,7 @@ VivaFit/
 │   │   │   ├── dashboard/   # Dashboard components
 │   │   │   ├── exercise/    # Exercise and workout components
 │   │   │   ├── home/        # Home page components
+│   │   │   ├── workout/     # Workout tracking components
 │   │   │   └── onboarding/  # User onboarding components
 │   │   ├── context/         # React context providers
 │   │   ├── firebase/        # Firebase configuration
@@ -184,6 +200,8 @@ VivaFit/
 - 🔔 Push notifications and workout reminders
 - 📹 Custom video uploading for personal exercise modifications
 - 🌐 Online/offline workout syncing for uninterrupted fitness sessions
+- 📝 Route saving and history for comparing past workouts
+- 🏃‍♀️ Advanced analytics for running/cycling performance
 
 ## 👥 Contributors
 - 👨‍💻 [Abdallah Yessine Kriaa](https://github.com/Kriaa89) - Full Stack Developer
