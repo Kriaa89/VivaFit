@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Footer from '../home/Footer';
 import DashboardNavbar from './DashboardNavbar';
 import { getIdToken } from '../../utils/auth';
+import FitnessMetrics from '../metrics/FitnessMetrics';
 
 function Dashboard() {
   const { currentUser } = useAuth();
@@ -11,6 +12,12 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [metrics, setMetrics] = useState({
+    distance: 0,
+    steps: 0,
+    calories: 0,
+    activeMinutes: 0
+  });
 
   // Add photo upload handler
   const handlePhotoUpload = async (event) => {
@@ -133,18 +140,23 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       <DashboardNavbar />
       
       <main className="flex-grow px-4 pt-8 pb-12">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Your Fitness Dashboard
-          </h1>
-          
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white shadow-xl">
+            <h1 className="text-4xl font-bold mb-4">Welcome back, {userProfile?.firstName || 'Fitness Friend'}! 👋</h1>
+            <p className="text-xl text-blue-100">Ready to crush your fitness goals today?</p>
+          </div>
+
+          {/* Metrics Section */}
+          <section className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Today's Progress</h2>
+            <FitnessMetrics metrics={metrics} />
+          </section>
+
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
