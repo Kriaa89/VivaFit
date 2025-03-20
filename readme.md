@@ -50,7 +50,19 @@ Our mission is to make fitness accessible, engaging, and effective for everyone,
 - 💾 Save and manage multiple programs for different goals
 - 📊 View saved programs with detailed breakdowns of exercises per day
 
-### 📈 4. Dashboard & Progress Tracking
+### ⏱️ 4. Interactive Workout Player
+- Start and follow through your saved workout programs with an intuitive interface
+- Features include:
+  - ▶️ Exercise-by-exercise guided navigation
+  - ⏱️ Customizable rest timers between exercises
+  - ⏯️ Pause and resume functionality during workouts
+  - ✅ Exercise completion tracking with visual feedback
+  - 📊 Progress tracking with completion percentage
+  - 🎬 Animated exercise demonstrations during workout
+  - 📋 Exercise details including sets, reps, and rest time
+- Complete workout sessions at your own pace with guidance at every step
+
+### 📈 5. Dashboard & Progress Tracking
 - Personalized dashboard with overview of fitness profile
 - BMI calculation and category indication with health insights
 - Track weight changes and body metrics over time
@@ -146,6 +158,11 @@ VivaFit/
 │   ├── src/                 # Source files
 │   │   ├── assets/          # Images and static resources
 │   │   ├── components/      # Reusable UI components
+│   │   │   ├── auth/        # Authentication components
+│   │   │   ├── dashboard/   # Dashboard components
+│   │   │   ├── exercise/    # Exercise and workout components
+│   │   │   ├── home/        # Home page components
+│   │   │   └── onboarding/  # User onboarding components
 │   │   ├── context/         # React context providers
 │   │   ├── firebase/        # Firebase configuration
 │   │   └── utils/           # Utility functions
@@ -165,6 +182,8 @@ VivaFit/
 - 📱 Native mobile app development for iOS and Android
 - 🤖 AI-powered workout recommendations based on user progress
 - 🔔 Push notifications and workout reminders
+- 📹 Custom video uploading for personal exercise modifications
+- 🌐 Online/offline workout syncing for uninterrupted fitness sessions
 
 ## 👥 Contributors
 - 👨‍💻 [Abdallah Yessine Kriaa](https://github.com/Kriaa89) - Full Stack Developer

@@ -10,6 +10,7 @@ import AboutUs from './components/home/AboutUs';
 import Dashboard from './components/dashboard/Dashboard';
 import Profile from './components/dashboard/Profile';
 import ExercisesList from './components/exercise/ExercisesList';
+import WorkoutPlayer from './components/exercise/WorkoutPlayer';
 
 function App() {
   return (
@@ -43,6 +44,13 @@ function App() {
               element={
                 <ProtectedRoute requireOnboarding={true}>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/workout/:programId"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <WorkoutPlayer />
                 </ProtectedRoute>
               }
             />
