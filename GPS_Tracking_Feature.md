@@ -1,4 +1,3 @@
-
 # GPS Tracking Feature for VivaFit
 
 This document explains how the GPS Tracking feature in VivaFit works. The feature leverages free tools available for web apps and demonstrates concepts that are useful for students learning about geolocation, mapping, and distance calculation.
@@ -94,6 +93,15 @@ if (segmentDistance > 0.001) {
   Once stopped, the app halts the GPS watch and timer, allowing users to review their tracked route, total distance, and calculated speed.
 - **Real-time Feedback:**  
   Distance (in kilometers), elapsed time (formatted as HH:MM:SS), and speed (in km/h) are displayed in visually distinctive cards to provide instant feedback.
+
+## New Enhancements
+
+- **Improved User Interface:**  
+  The new controls are integrated with a visually appealing, motion-enhanced UI built with Tailwind CSS. Buttons feature smooth hover transitions and scaling effects to enhance user engagement.
+- **Instant Metrics Updates:**  
+  As soon as new GPS data is received, metrics are recalculated and updated in real time without page refreshes.
+- **Enhanced Map Interaction:**  
+  Building on the existing React-Leaflet implementation, the map now highlights both the starting point and the latest coordinate with updated markers, offering clearer route visualization.
 
 ## How Students Can Learn from This Feature
 
