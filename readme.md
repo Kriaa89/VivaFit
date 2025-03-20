@@ -212,17 +212,6 @@ VivaFit/
 - 📹 Custom video uploading for personal exercise modifications
 - 🌐 Online/offline workout syncing for uninterrupted fitness sessions
 
-## 👥 Contributors
-- 👨‍💻 [Abdallah Yessine Kriaa](https://github.com/Kriaa89) - Full Stack Developer
-- 👨‍💻 [Hamza Jbali](https://github.com/hamzajbali) - UX Designer & Developer
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-<div align="center">
-Made with ❤️ by the VivaFit Team | © 2023 VivaFit
-</div>
 
 ## Context
 VivaFit was created to address the need for a comprehensive fitness application that offers personalized workout plans, real-time progress tracking, and smart insights. The goal is to make fitness accessible, engaging, and effective for everyone, regardless of their starting point or ultimate fitness aspirations.
@@ -248,3 +237,15 @@ VivaFit provides a seamless experience for fitness enthusiasts to track their pr
 - Managing and displaying real-time data for progress tracking
 - Handling large datasets for exercises and workout plans
 - Ensuring scalability and performance of the application
+
+## 👥 Contributors
+- 👨‍💻 [Abdallah Yessine Kriaa](https://github.com/Kriaa89) - Full Stack Developer
+- 👨‍💻 [Hamza Jbali](https://github.com/hamzajbali) - UX Designer & Developer
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+<div align="center">
+Made with ❤️ by the VivaFit Team | © 2023 VivaFit
+</div> 
