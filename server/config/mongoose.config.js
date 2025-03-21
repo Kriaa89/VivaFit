@@ -11,17 +11,17 @@ async function dbConnect() {
       retryWrites: true,
       w: 'majority'
     });
-    console.log("Connected to MongoDB successfully!");
+    
     mongoose.connection.on('error', err => {
       console.error('MongoDB connection error:', err);
     });
+    
     process.on('SIGINT', async () => {
       await mongoose.connection.close();
       process.exit(0);
     });
 
   } catch (error) {
-    console.error("Failed to connect to MongoDB:", error.message);
     throw error;
   }
 }
