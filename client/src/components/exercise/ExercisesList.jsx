@@ -15,7 +15,6 @@ const ExercisesList = () => {
     const [selectedMuscle, setSelectedMuscle] = useState('all');
     const [targetMuscles, setTargetMuscles] = useState([]);
     
-    // Program state
     const [showProgramBuilder, setShowProgramBuilder] = useState(false);
     const [programName, setProgramName] = useState('');
     const [weeklyProgram, setWeeklyProgram] = useState({
@@ -37,17 +36,13 @@ const ExercisesList = () => {
         const fetchExercises = async () => {
             try {
                 const response = await axios.get("http://exercisedb-api.vercel.app/api/v1/exercises?offset=100&limit=100");
-                console.log('Fetched data ', response.data);
-                // Extract the exercise list based on API structure
                 const exerciseList = response.data.data.exercises;
                 setExercises(exerciseList);
                 setFilteredExercises(exerciseList);
 
-                // Dynamically compute unique target muscles from fetched exercises
                 const muscles = [...new Set(exerciseList.flatMap(ex => ex.targetMuscles))];
                 setTargetMuscles(muscles);
             } catch (err) {
-                console.error('Error fetching exercises:', err);
                 setError('Failed to fetch exercises');
                 toast.error("Failed to load exercises. Please try again later.");
             } finally {
@@ -58,7 +53,6 @@ const ExercisesList = () => {
         fetchExercises();
     }, []);
 
-    // Fetch saved programs
     useEffect(() => {
         const fetchSavedPrograms = async () => {
             if (!currentUser) return;
@@ -69,10 +63,8 @@ const ExercisesList = () => {
                         Authorization: `Bearer ${await currentUser.getIdToken()}`
                     }
                 });
-                // Updated to handle the modified server response format
                 setSavedPrograms(response.data);
             } catch (err) {
-                console.error('Error fetching saved programs:', err);
                 toast.error("Failed to load your saved programs");
             }
         };
@@ -83,7 +75,6 @@ const ExercisesList = () => {
     }, [currentUser, showSavedPrograms]);
 
     useEffect(() => {
-        // Filter exercises when selectedMuscle changes
         if (selectedMuscle === 'all') {
             setFilteredExercises(exercises);
         } else {
@@ -125,7 +116,6 @@ const ExercisesList = () => {
             [selectedDay]: [...prev[selectedDay], ...selectedExercisesArray]
         }));
 
-        // Clear selections after adding
         setSelectedExercises({});
         toast.success(`Exercises added to ${selectedDay}`);
     };
@@ -153,7 +143,6 @@ const ExercisesList = () => {
             return;
         }
 
-        // Check if any day has exercises
         const hasExercises = Object.values(weeklyProgram).some(day => day.length > 0);
         if (!hasExercises) {
             toast.error("Please add at least one exercise to your program");
@@ -163,7 +152,6 @@ const ExercisesList = () => {
         try {
             setSavingProgram(true);
             
-            // Format the data for API
             const workouts = Object.entries(weeklyProgram)
                 .filter(([_, exercises]) => exercises.length > 0)
                 .map(([day, exercises]) => ({
@@ -176,8 +164,7 @@ const ExercisesList = () => {
                 workouts
             };
 
-            // Send to your backend API
-            const response = await axios.post('http://localhost:8000/api/programs', programData, {
+            await axios.post('http://localhost:8000/api/programs', programData, {
                 headers: {
                     Authorization: `Bearer ${await currentUser.getIdToken()}`
                 }
@@ -185,7 +172,6 @@ const ExercisesList = () => {
 
             toast.success("Workout program saved successfully!");
             
-            // Reset form
             setProgramName('');
             setWeeklyProgram({
                 Monday: [],
@@ -198,18 +184,15 @@ const ExercisesList = () => {
             });
             setShowProgramBuilder(false);
             
-            // Refresh saved programs if they're being viewed
             if (showSavedPrograms) {
                 const programsResponse = await axios.get('http://localhost:8000/api/programs', {
                     headers: {
                         Authorization: `Bearer ${await currentUser.getIdToken()}`
                     }
                 });
-                // Updated to handle the modified server response format
                 setSavedPrograms(programsResponse.data);
             }
         } catch (err) {
-            console.error('Error saving program:', err);
             toast.error(err.response?.data?.message || "Failed to save program. Please try again.");
         } finally {
             setSavingProgram(false);
@@ -229,11 +212,8 @@ const ExercisesList = () => {
             });
             
             toast.success("Program deleted successfully");
-            
-            // Update the list of saved programs
             setSavedPrograms(prev => prev.filter(program => program._id !== programId));
         } catch (err) {
-            console.error('Error deleting program:', err);
             toast.error("Failed to delete program");
         }
     };
@@ -277,26 +257,24 @@ const ExercisesList = () => {
         <div className="min-h-screen bg-gray-100">
             <DashboardNavbar />
             <div className="container mx-auto py-8 px-4">
-                {/* Header and Controls */}
                 <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
                     <h1 className="text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Explore Exercises</h1>
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center">
-                            <label htmlFor="muscleFilter" className="mr-2 font-medium text-gray-700">Filter by Muscle:</label>
+                            <label htmlFor="muscleFilter" className="mr-2 text-gray-700">Filter by muscle:</label>
                             <select
                                 id="muscleFilter"
                                 value={selectedMuscle}
                                 onChange={(e) => setSelectedMuscle(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
-                                <option value="all">All</option>
-                                {targetMuscles.map((muscle) => (
-                                    <option key={muscle} value={muscle}>
-                                        {muscle}
-                                    </option>
+                                <option value="all">All Muscles</option>
+                                {targetMuscles.map(muscle => (
+                                    <option key={muscle} value={muscle}>{muscle}</option>
                                 ))}
                             </select>
                         </div>
+                        
                         <div className="flex space-x-2">
                             <button 
                                 onClick={() => {
@@ -320,7 +298,6 @@ const ExercisesList = () => {
                     </div>
                 </div>
 
-                {/* Program Builder */}
                 {showProgramBuilder && (
                     <div className="bg-gray-50 border border-gray-300 rounded-lg shadow-md p-8 mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Weekly Program Builder</h2>
@@ -341,7 +318,6 @@ const ExercisesList = () => {
                         </div>
                         
                         <div className="mb-6">
-                            {/* Updated Select Day Container */}
                             <div className="flex items-center gap-4 mb-4">
                                 <label htmlFor="daySelect" className="text-sm font-medium text-gray-700">
                                     Select Day:
@@ -350,7 +326,7 @@ const ExercisesList = () => {
                                     id="daySelect"
                                     value={selectedDay}
                                     onChange={(e) => setSelectedDay(e.target.value)}
-                                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto"
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                                 >
                                     {Object.keys(weeklyProgram).map(day => (
                                         <option key={day} value={day}>{day}</option>
@@ -358,45 +334,50 @@ const ExercisesList = () => {
                                 </select>
                                 <button
                                     onClick={addSelectedExercisesToDay}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors w-full sm:w-auto"
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                                    disabled={Object.keys(selectedExercises).length === 0}
                                 >
                                     Add Selected Exercises to {selectedDay}
                                 </button>
                             </div>
-
-                            {/* Selected Exercises Count */}
-                            <div className="text-sm text-gray-600 mb-4">
-                                {Object.keys(selectedExercises).length} exercise(s) selected
-                            </div>
-
-                            {/* Updated Weekly Schedule Display for each exercise */}
-                            <div className="border border-gray-200 rounded-md overflow-x-auto">
-                                <div className="grid grid-cols-1 md:grid-cols-7 gap-2 p-4 min-w-full">
-                                    {Object.entries(weeklyProgram).map(([day, dayExercises]) => (
-                                        <div key={day} className="border border-gray-200 rounded p-2 min-w-[200px]">
-                                            <h3 className="font-bold text-gray-700 mb-2">{day}</h3>
-                                            {dayExercises.length === 0 ? (
-                                                <p className="text-sm text-gray-500">No exercises</p>
-                                            ) : (
-                                                <ul className="space-y-2">
-                                                    {dayExercises.map((ex, index) => (
-                                                        <li key={`${day}-${ex.exerciseId}-${index}`} className="text-sm">
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="font-medium">{ex.exerciseName}</span>
-                                                                <button
+                        </div>
+                        
+                        <div className="mb-6">
+                            <h3 className="text-lg font-semibold text-gray-700 mb-3">Weekly Schedule</h3>
+                            <div className="border rounded-lg overflow-hidden">
+                                <div className="bg-gray-100 px-4 py-2 grid grid-cols-7 gap-1 text-sm font-medium">
+                                    {Object.keys(weeklyProgram).map(day => (
+                                        <div key={day} className="text-center py-1">{day}</div>
+                                    ))}
+                                </div>
+                                <div className="grid grid-cols-7 gap-1 p-2 bg-white">
+                                    {Object.entries(weeklyProgram).map(([day, exercises]) => (
+                                        <div key={day} className="border rounded p-2 flex flex-col h-full">
+                                            <div className="text-center text-sm font-medium text-gray-500 mb-2">
+                                                {exercises.length} exercise{exercises.length !== 1 ? 's' : ''}
+                                            </div>
+                                            {exercises.length > 0 && (
+                                                <ul className="space-y-2 flex-1 overflow-y-auto max-h-40">
+                                                    {exercises.map(ex => (
+                                                        <li key={ex.exerciseId} className="text-xs p-2 bg-gray-50 rounded">
+                                                            <div className="flex justify-between items-center mb-1">
+                                                                <span className="font-medium truncate">{ex.exerciseName}</span>
+                                                                <button 
                                                                     onClick={() => removeExerciseFromDay(day, ex.exerciseId)}
                                                                     className="text-red-500 hover:text-red-700"
                                                                 >
-                                                                    ×
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
                                                                 </button>
                                                             </div>
-                                                            <div className="flex flex-col sm:flex-row text-gray-600 gap-4 mt-2">
+                                                            <div className="flex flex-col space-y-1">
                                                                 <div className="flex items-center">
                                                                     <label className="mr-2">Sets:</label>
                                                                     <input
                                                                         type="number"
                                                                         min="1"
-                                                                        max="20"
+                                                                        max="10"
                                                                         value={ex.sets}
                                                                         onChange={(e) => updateExerciseInDay(day, ex.exerciseId, 'sets', parseInt(e.target.value) || 1)}
                                                                         className="w-16 border border-gray-300 rounded px-2 py-1"
@@ -435,7 +416,7 @@ const ExercisesList = () => {
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div className="flex justify-end">
                             <button
                                 onClick={saveProgram}
@@ -448,7 +429,6 @@ const ExercisesList = () => {
                     </div>
                 )}
 
-                {/* Saved Programs View */}
                 {showSavedPrograms && (
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">My Workout Programs</h2>
@@ -493,7 +473,7 @@ const ExercisesList = () => {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="space-y-3">
+                                        <div>
                                             {program.workouts.map(workout => (
                                                 <div key={workout._id} className="border-t pt-2">
                                                     <h4 className="font-medium text-gray-700">{workout.dayOfWeek}</h4>
@@ -515,37 +495,22 @@ const ExercisesList = () => {
                     </div>
                 )}
 
-                {/* Exercises Grid */}
                 {!showSavedPrograms && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         {filteredExercises.length > 0 ? (
-                            filteredExercises.map((exercise) => (
-                                <div 
-                                    key={exercise.exerciseId} 
-                                    className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 ${
-                                        selectedExercises[exercise.exerciseId] ? 'ring-2 ring-green-500' : ''
-                                    }`}
-                                >
-                                    <img 
-                                        src={exercise.gifUrl} 
-                                        alt={exercise.name} 
-                                        className="w-full h-48 object-cover" 
-                                    />
+                            filteredExercises.map(exercise => (
+                                <div key={exercise.exerciseId} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg">
                                     <div className="p-4">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <h3 className="text-xl font-semibold text-gray-800">{exercise.name}</h3>
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="text-lg font-semibold text-gray-800 mb-1">{exercise.name}</h3>
                                             {showProgramBuilder && (
-                                                <button
+                                                <button 
                                                     onClick={() => toggleExerciseSelection(exercise)}
-                                                    className={`p-2 rounded-full ${
-                                                        selectedExercises[exercise.exerciseId] 
-                                                            ? 'bg-green-100 text-green-600' 
-                                                            : 'bg-gray-100 text-gray-600'
-                                                    }`}
+                                                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                                                 >
                                                     {selectedExercises[exercise.exerciseId] ? (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
                                                     ) : (
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -566,33 +531,15 @@ const ExercisesList = () => {
                                         </div>
                                         <div className="mt-3">
                                             <button 
-                                                className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors duration-200 text-sm"
-                                                onClick={() => {
-                                                    // Toggle details for this specific exercise
-                                                    setFilteredExercises(prev => 
-                                                        prev.map(ex => 
-                                                            ex.exerciseId === exercise.exerciseId 
-                                                                ? { ...ex, showDetails: !ex.showDetails } 
-                                                                : ex
-                                                        )
-                                                    );
-                                                }}
+                                                onClick={() => toggleExerciseSelection(exercise)}
+                                                className={`w-full py-2 text-sm font-medium rounded-md transition-colors ${
+                                                    selectedExercises[exercise.exerciseId] 
+                                                        ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                }`}
                                             >
-                                                {exercise.showDetails ? 'Hide Details' : 'Show Instructions'}
+                                                {selectedExercises[exercise.exerciseId] ? 'Selected' : 'Select for Workout'}
                                             </button>
-                                            
-                                            {exercise.showDetails && (
-                                                <div className='mt-4 border-t pt-4'>
-                                                    <div>
-                                                        <strong>Instructions:</strong>
-                                                        <ol className='list-decimal list-inside'>
-                                                            {exercise.instructions.map((instruction, index) => (
-                                                                <li key={index} className='text-gray-600 text-sm my-1'>{instruction}</li>
-                                                            ))}
-                                                        </ol>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>

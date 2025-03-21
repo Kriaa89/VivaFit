@@ -14,7 +14,6 @@ const WorkoutPlayer = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // Workout state
     const [currentWorkoutIndex, setCurrentWorkoutIndex] = useState(0);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -23,7 +22,6 @@ const WorkoutPlayer = () => {
     const [completedExercises, setCompletedExercises] = useState([]);
     const timerRef = useRef(null);
     
-    // Fetch program data
     useEffect(() => {
         const fetchProgram = async () => {
             if (!currentUser) return;
@@ -37,7 +35,6 @@ const WorkoutPlayer = () => {
                 });
                 
                 if (response.data) {
-                    // Sort workouts to ensure they're in a consistent order
                     const workouts = [...response.data.workouts].sort((a, b) => {
                         const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                         return days.indexOf(a.dayOfWeek) - days.indexOf(b.dayOfWeek);
@@ -46,7 +43,6 @@ const WorkoutPlayer = () => {
                     setProgram({...response.data, workouts});
                 }
             } catch (err) {
-                console.error('Error fetching program:', err);
                 setError('Failed to load workout program. Please try again.');
                 toast.error("Couldn't load workout program");
             } finally {
@@ -57,7 +53,6 @@ const WorkoutPlayer = () => {
         fetchProgram();
     }, [currentUser, programId]);
     
-    // Handle timer
     useEffect(() => {
         if (isPlaying && !isPaused && timeLeft > 0) {
             timerRef.current = setInterval(() => {
@@ -95,7 +90,6 @@ const WorkoutPlayer = () => {
         
         setIsPlaying(true);
         setIsPaused(false);
-        // Convert rest time to seconds for countdown
         setTimeLeft(exercise.restTime || 60);
         toast.info(`Starting: ${exercise.exerciseName}`);
     };
@@ -119,10 +113,8 @@ const WorkoutPlayer = () => {
         const exercise = getCurrentExercise();
         if (!exercise) return;
         
-        // Add to completed exercises
         setCompletedExercises(prev => [...prev, exercise.exerciseId]);
         
-        // Move to next exercise or workout
         const currentWorkout = program.workouts[currentWorkoutIndex];
         
         if (currentExerciseIndex < currentWorkout.exercises.length - 1) {
@@ -155,22 +147,13 @@ const WorkoutPlayer = () => {
     const getProgressPercentage = () => {
         if (!program || !program.workouts) return 0;
         
-        // Calculate total exercises
-        const totalExercises = program.workouts.reduce((total, workout) => 
-            total + workout.exercises.length, 0);
+        let totalExercises = 0;
+        program.workouts.forEach(workout => {
+            totalExercises += workout.exercises.length;
+        });
         
-        // Calculate completed percentage
-        let completedCount = completedExercises.length;
-        
-        // Add all exercises before current workout
-        for (let i = 0; i < currentWorkoutIndex; i++) {
-            completedCount += program.workouts[i].exercises.length;
-        }
-        
-        // Add exercises in current workout up to current exercise
-        completedCount += currentExerciseIndex;
-        
-        return Math.round((completedCount / totalExercises) * 100);
+        if (totalExercises === 0) return 0;
+        return Math.round((completedExercises.length / totalExercises) * 100);
     };
     
     if (loading) {
@@ -241,7 +224,6 @@ const WorkoutPlayer = () => {
                     </button>
                 </div>
                 
-                {/* Progress bar */}
                 <div className="bg-gray-200 h-4 rounded-full mb-8 overflow-hidden">
                     <div 
                         className="bg-green-500 h-full rounded-full transition-all duration-500"
@@ -249,30 +231,27 @@ const WorkoutPlayer = () => {
                     ></div>
                 </div>
                 
-                {/* Current workout & exercise */}
                 {program.workouts.length > 0 && (
-                    <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                        <div className="mb-4">
-                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                                {program.workouts[currentWorkoutIndex]?.dayOfWeek}
-                            </span>
-                        </div>
+                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">
+                            {program.workouts[currentWorkoutIndex].dayOfWeek} - Exercise {currentExerciseIndex + 1} of {program.workouts[currentWorkoutIndex].exercises.length}
+                        </h2>
                         
                         {exercise ? (
-                            <>
-                                <div className="flex flex-col md:flex-row gap-6">
-                                    <div className="md:w-1/3">
-                                        <img 
-                                            src={exercise.gifUrl} 
-                                            alt={exercise.exerciseName} 
-                                            className="w-full rounded-lg"
-                                        />
-                                    </div>
-                                    
+                            <div>
+                                <div className="flex flex-col md:flex-row items-center mb-6 p-4 bg-gray-50 rounded-lg">
+                                    {exercise.gifUrl && (
+                                        <div className="md:w-1/3 mb-4 md:mb-0 md:mr-6">
+                                            <img 
+                                                src={exercise.gifUrl} 
+                                                alt={exercise.exerciseName} 
+                                                className="rounded-lg shadow-md max-w-full max-h-60 mx-auto"
+                                            />
+                                        </div>
+                                    )}
                                     <div className="md:w-2/3">
-                                        <h2 className="text-2xl font-bold text-gray-800 mb-2">{exercise.exerciseName}</h2>
-                                        
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                                        <h3 className="text-2xl font-bold text-gray-800 mb-4">{exercise.exerciseName}</h3>
+                                        <div className="grid grid-cols-3 gap-4 mb-6">
                                             <div className="bg-gray-100 p-3 rounded-lg text-center">
                                                 <p className="text-sm text-gray-500">Sets</p>
                                                 <p className="text-xl font-bold text-gray-800">{exercise.sets}</p>
@@ -347,7 +326,6 @@ const WorkoutPlayer = () => {
                                     </div>
                                 </div>
                                 
-                                {/* Exercise list */}
                                 <div className="mt-8 border-t pt-6">
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Workout Plan</h3>
                                     <div className="overflow-x-auto">
@@ -361,28 +339,19 @@ const WorkoutPlayer = () => {
                                                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Rest</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                {program.workouts[currentWorkoutIndex].exercises.map((ex, idx) => (
-                                                    <tr 
-                                                        key={ex.exerciseId + idx} 
-                                                        className={`border-b ${idx === currentExerciseIndex ? 'bg-green-50' : ''}`}
-                                                    >
+                                            <tbody className="divide-y divide-gray-200">
+                                                {program.workouts[currentWorkoutIndex].exercises.map((ex) => (
+                                                    <tr key={ex.exerciseId} className={`${completedExercises.includes(ex.exerciseId) ? 'bg-green-50' : ''}`}>
                                                         <td className="px-4 py-3">
                                                             {completedExercises.includes(ex.exerciseId) ? (
-                                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-800 rounded-full">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                <span className="text-green-500">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                                     </svg>
                                                                 </span>
-                                                            ) : idx === currentExerciseIndex ? (
-                                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-800 rounded-full">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                                                                    </svg>
-                                                                </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-400 rounded-full">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                            ) : ex.exerciseId === exercise.exerciseId ? (
+                                                                <span className="text-blue-500">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                                                                     </svg>
                                                                 </span>
@@ -398,7 +367,7 @@ const WorkoutPlayer = () => {
                                         </table>
                                     </div>
                                 </div>
-                            </>
+                            </div>
                         ) : (
                             <div className="text-center py-8">
                                 <p className="text-lg text-gray-600">No exercises found in this workout.</p>
@@ -413,7 +382,6 @@ const WorkoutPlayer = () => {
                     </div>
                 )}
                 
-                {/* Completed message */}
                 {getProgressPercentage() === 100 && (
                     <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
                         <div className="flex">
