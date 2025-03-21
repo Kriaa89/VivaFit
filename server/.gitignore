@@ -13,3 +13,49 @@ firebase-service-account.json
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Environment variables & secrets
+.env*
+*.env
+.env.local
+.env.development
+.env.production
+
+# Security & Keys
+**/credentials/
+**/certs/
+*.pem
+*.key
+*.cert
+*.p12
+jwt*.key
+
+# Server config files
+config/*
+!config/example.config.js
+
+# Upload directories
+uploads/*
+!uploads/.gitkeep
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Debug & Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+debug/

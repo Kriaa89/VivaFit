@@ -32,3 +32,35 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+
+# Firebase config
+src/firebase/firebase.config.js
+firebase-config.js
+**/firebase*.js
+
+# Testing
+coverage/
+*.lcov
+.nyc_output/
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Debug logs
+debug.log
+debug/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
