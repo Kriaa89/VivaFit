@@ -12,7 +12,7 @@ const DashboardNavbar = () => {
             await logout();
             navigate('/login');
         } catch (error) {
-            console.error('Failed to log out', error);
+            // Silent error handling, just keep user on current page
         }
     };
 
@@ -28,7 +28,6 @@ const DashboardNavbar = () => {
                     </Link>
                 </div>
 
-                {/* Desktop Menu */}
                 <div className="hidden md:flex md:items-center space-x-4">
                     <Link to="/dashboard" className="px-3 py-2 rounded-md hover:bg-green-500 transition-colors flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,7 +58,6 @@ const DashboardNavbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile menu button */}
                 <div className="md:hidden">
                     <button 
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -76,7 +74,6 @@ const DashboardNavbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
             <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden mt-2`}>
                 <div className="flex flex-col space-y-2 p-2 bg-green-700 rounded-md">
                     <Link to="/dashboard" className="px-3 py-2 rounded-md hover:bg-green-500 transition-colors flex items-center">

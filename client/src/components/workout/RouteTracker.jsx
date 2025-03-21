@@ -4,7 +4,6 @@ import * as turf from '@turf/turf';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Fix for default marker icons in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -12,7 +11,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-// Component to recenter map when position changes
 function SetViewOnLocation({ coords }) {
   const map = useMap();
   useEffect(() => {
@@ -35,25 +33,21 @@ export default function RouteTracker() {
   const timerIdRef = useRef(null);
   const elapsedTimeRef = useRef(0);
 
-  // Start tracking user location
   const startTracking = () => {
     if (tracking) return;
     
-    // Clear previous data
     setCoordinates([]);
     setDistance(0);
     setElapsedTime(0);
     setSpeed(0);
     startTimeRef.current = new Date();
     
-    // Start timer for elapsed time
     timerIdRef.current = setInterval(() => {
       const seconds = Math.floor((new Date() - startTimeRef.current) / 1000);
       setElapsedTime(seconds);
       elapsedTimeRef.current = seconds;
     }, 1000);
     
-    // Use Geolocation API to watch position
     if ('geolocation' in navigator) {
       const options = {
         enableHighAccuracy: true,
@@ -71,7 +65,6 @@ export default function RouteTracker() {
           setCoordinates(prevCoords => {
             const updatedCoords = [...prevCoords, newCoord];
             
-            // Calculate distance if we have at least 2 points
             if (updatedCoords.length >= 2) {
               const lastIndex = updatedCoords.length - 1;
               const from = turf.point([updatedCoords[lastIndex-1][1], updatedCoords[lastIndex-1][0]]);
@@ -80,12 +73,10 @@ export default function RouteTracker() {
               
               const segmentDistance = turf.distance(from, to, options);
               
-              // Only add distance if it's a reasonable movement (to filter GPS noise)
-              if (segmentDistance > 0.001) {  // More than 1 meter
+              if (segmentDistance > 0.001) {
                 setDistance(prevDistance => {
                   const newTotalDistance = prevDistance + segmentDistance;
                   
-                  // Calculate current speed in km/h
                   if (elapsedTimeRef.current > 0) {
                     const speedKmh = (newTotalDistance / (elapsedTimeRef.current / 3600)).toFixed(2);
                     setSpeed(speedKmh);
@@ -100,7 +91,6 @@ export default function RouteTracker() {
           });
         },
         (error) => {
-          console.error('Error getting location:', error);
           alert(`Location error: ${error.message}`);
         },
         options
@@ -112,7 +102,6 @@ export default function RouteTracker() {
     }
   };
 
-  // Stop tracking
   const stopTracking = () => {
     if (watchIdRef.current) {
       navigator.geolocation.clearWatch(watchIdRef.current);
@@ -127,7 +116,6 @@ export default function RouteTracker() {
     setTracking(false);
   };
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (watchIdRef.current) {
@@ -139,7 +127,6 @@ export default function RouteTracker() {
     };
   }, []);
 
-  // Format time as HH:MM:SS
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -147,7 +134,6 @@ export default function RouteTracker() {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Get map coordinates for react-leaflet (swap lat/lng)
   const getMapCoordinates = () => {
     return coordinates.map(coord => [coord[0], coord[1]]);
   };
@@ -164,7 +150,6 @@ export default function RouteTracker() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Distance Card */}
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-white/20 rounded-lg p-2">
@@ -178,7 +163,6 @@ export default function RouteTracker() {
             <div className="text-blue-100">Kilometers</div>
           </div>
 
-          {/* Time Card */}
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-white/20 rounded-lg p-2">
@@ -192,7 +176,6 @@ export default function RouteTracker() {
             <div className="text-purple-100">Duration</div>
           </div>
 
-          {/* Speed Card */}
           <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-white/20 rounded-lg p-2">
