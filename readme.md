@@ -240,7 +240,6 @@ VivaFit provides a seamless experience for fitness enthusiasts to track their pr
 
 ## 👥 Contributors
 - 👨‍💻 [Abdallah Yessine Kriaa](https://github.com/Kriaa89) - Full Stack Developer
-- 👨‍💻 [Hamza Jbali](https://github.com/hamzajbali) - UX Designer & Developer
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
